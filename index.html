@@ -1,0 +1,2766 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookSaga — The First AI App That Turns One Idea Into A KDP-Ready Book Series</title>
+  <meta name="description" content="Plan, write and package entire 5-book series for Amazon KDP before you go to bed. One idea in, a whole connected saga out.">
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            // BookSaga logo palette: violet, magenta, orange and deep navy.
+            brand: { 50: '#faf4ff', 100: '#f1ddff', 500: '#9135da', 600: '#7425c7', 700: '#5d1aa4' },
+            indigo: { 50: '#faf4ff', 100: '#f1ddff', 200: '#e2bdff', 300: '#d59aff', 400: '#c47aff', 500: '#9c3ee3', 600: '#7a29ce', 700: '#6720aa', 800: '#4b167b', 900: '#351155', 950: '#210a36' },
+            amber: { 50: '#fff7ef', 100: '#ffead7', 200: '#ffd2ac', 300: '#ffb581', 400: '#ff9a52', 500: '#ff7929', 600: '#ed5d16', 700: '#ad3a0b', 800: '#773011', 900: '#57230d', 950: '#321409' },
+            emerald: { 50: '#fff3f9', 100: '#ffe2f1', 200: '#ffc6e2', 300: '#ff9ccf', 400: '#ff70b5', 500: '#ed3c98', 600: '#ca2279', 700: '#a01761', 800: '#74134a', 900: '#53103a', 950: '#310821' },
+            dark: {
+              950: '#060913',
+              900: '#0a0f1d',
+              850: '#0f172a',
+              800: '#131e36',
+              700: '#1e293b',
+            }
+          },
+          boxShadow: {
+            'glow-amber': '0 0 35px -5px rgba(255, 121, 41, 0.45)',
+            'glow-indigo': '0 0 40px -5px rgba(145, 53, 218, 0.4)',
+            'glow-emerald': '0 0 35px -5px rgba(237, 60, 152, 0.4)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #060913;
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Outfit', sans-serif;
+    }
+    .text-gradient-gold {
+      background: linear-gradient(135deg, #ffc18a 0%, #ff7929 50%, #f34d74 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .text-gradient-indigo {
+      background: linear-gradient(135deg, #e2bdff 0%, #9c3ee3 50%, #ed3c98 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .text-gradient-emerald {
+      background: linear-gradient(135deg, #ffc6e2 0%, #ed3c98 50%, #d7358c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .bg-grid-pattern {
+      background-image: radial-gradient(rgba(156, 62, 227, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .glass-card {
+      background: rgba(19, 30, 54, 0.65);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card-hover {
+      transition: all 0.25s ease-in-out;
+    }
+    .glass-card-hover:hover {
+      transform: translateY(-4px);
+      border-color: rgba(156, 62, 227, 0.35);
+      box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.5);
+    }
+    .cta-btn-shimmer {
+      background: linear-gradient(135deg, #ff9a52 0%, #ff7929 55%, #f34d74 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-btn-shimmer::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transform: rotate(30deg);
+      animation: shimmer 3.5s infinite;
+    }
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) rotate(30deg); }
+      100% { transform: translateX(100%) rotate(30deg); }
+    }
+
+    .hero-intro { position: relative; overflow: hidden; background: linear-gradient(130deg, #f5e9fc 0%, #fff 43%, #fff0f5 100%); color: #0a1122; text-align: center; }
+    .hero-intro::before { content: ''; position: absolute; width: 34rem; height: 29rem; left: -13rem; top: -17rem; border-radius: 48%; background: #e9c9f5; transform: rotate(-20deg); }
+    .hero-intro::after { content: ''; position: absolute; width: 26rem; height: 26rem; right: -16rem; top: -16rem; border-radius: 50%; border: 2px solid #e8a7c7; box-shadow: 0 0 0 16px #fff3f7, 0 0 0 18px #e8a7c7, 0 0 0 34px #fff3f7, 0 0 0 36px #e8a7c7; opacity: .65; }
+    .hero-intro-content { position: relative; z-index: 1; max-width: 1200px; margin: auto; padding: 24px 20px 62px; }
+    .hero-logo { display: block; width: 130px; height: auto; margin: 0 auto 32px; border-radius: 8px; }
+    .hero-eyebrow { display: inline-block; padding: 9px 20px; border: 1px solid #f6b93b; border-radius: 999px; background: #fffaf1; color: #9a4000; font-size: 14px; font-weight: 700; }
+    .hero-title { margin: 25px auto 24px; font-size: clamp(1.8rem, 4.2vw, 3.5rem); font-weight: 900; line-height: 1.15; letter-spacing: -.045em; color: #0a1122; }
+    .hero-title-line { display: flex; justify-content: center; align-items: baseline; flex-wrap: wrap; gap: .08em .16em; }
+    .hero-title-line + .hero-title-line { margin-top: .12em; }
+    .hero-title .orange, .hero-title .blue { display: inline-block; white-space: nowrap; padding: 0 .14em .05em; border-radius: 6px; color: white; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+    .hero-title .orange { background: linear-gradient(100deg, #ff8b19, #f15a12); }
+    .hero-title .blue { background: linear-gradient(100deg, #7927d4, #ed3c98); }
+    .hero-band { display: table; max-width: 100%; margin: 18px auto; padding: 12px 25px; border-radius: 999px; font-weight: 800; line-height: 1.35; }
+    .hero-band-dark { background: #0a1122; border: 1px solid #f6b93b; color: white; font-size: clamp(1rem, 2.2vw, 1.5rem); box-shadow: 0 8px 28px #f3b42640; }
+    .hero-band-dark span { color: #ff8a18; }
+    .hero-band-gold { background: linear-gradient(100deg, #ffa500, #f15a12); color: #111827; font-size: clamp(.95rem, 1.8vw, 1.2rem); }
+    .hero-copy { max-width: 760px; margin: 20px auto 0; color: #536d87; font-size: clamp(1rem, 1.5vw, 1.15rem); line-height: 1.7; }
+    .hero-skill { color: #1e293b; font-weight: 600; margin-top: 20px; }
+    .hero-skill strong { color: #df3b29; }
+    @media (max-width: 640px) { .hero-title { font-size: clamp(1.35rem, 5.8vw, 2.2rem); } .hero-intro-content { padding: 24px 18px 48px; } .hero-logo { width: 110px; margin-bottom: 24px; } .hero-title { line-height: 1.25; } .hero-band { border-radius: 20px; } }
+
+    .vsl-section { background: #fcf1f8; color: #334a62; padding: 50px 20px 65px; }
+    .vsl-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(36px, 6vw, 80px); align-items: start; }
+    .vsl-player { border: 4px solid #101c3d; border-radius: 14px; overflow: hidden; background: #121b36; }
+    wistia-player[media-id="usc76dhlrf"]:not(:defined) { background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/usc76dhlrf/swatch'); display: block; filter: blur(5px); padding-top: 56.25%; }
+    .vsl-offer { max-width: 430px; margin: 32px auto 0; text-align: center; }
+    .vsl-offer h2 { color: #0a1122; font-size: clamp(1.6rem, 2.8vw, 2.2rem); line-height: 1.25; font-weight: 900; margin-bottom: 22px; }
+    .vsl-offer-box { background: #7425c7; border-radius: 24px; padding: 18px 24px 20px; color: white; }
+    .vsl-price { display: flex; justify-content: space-between; gap: 12px; font-size: .95rem; font-weight: 700; margin-bottom: 12px; }
+    .vsl-buy { display: block; background: #ff7900; border: 2px solid white; border-radius: 15px; color: white; font-size: 1.25rem; font-weight: 900; padding: 14px; }
+    .vsl-buy:hover { background: #e65e00; }
+    .vsl-trust { color: #f9eaff; font-size: .8rem; margin-top: 10px; }
+    .vsl-features { display: grid; gap: 18px; margin: 0; padding: 0; list-style: none; }
+    .vsl-features li { display: flex; align-items: flex-start; gap: 12px; font-size: .96rem; line-height: 1.55; }
+    .vsl-features li::before { content: '✓'; flex: 0 0 32px; height: 32px; display: grid; place-items: center; border-radius: 9px; color: #7425c7; background: #f0ddff; font-weight: 900; }
+    .vsl-features li:nth-child(3n+2)::before { color: #af1f69; background: #ffe0ee; }
+    .vsl-features li:nth-child(3n)::before { color: #b9470b; background: #fff0df; }
+    .vsl-features strong { color: #6720aa; text-decoration: underline; text-underline-offset: 3px; }
+    .vsl-features li:nth-child(3n+2) strong { color: #a01761; }
+    .vsl-features li:nth-child(3n) strong { color: #a83e08; }
+    @media (max-width: 767px) { .vsl-grid { grid-template-columns: 1fr; } .vsl-section { padding: 36px 18px 48px; } }
+
+    .team-heading { margin-bottom: 2.5rem; }
+    .team-kicker { display: inline-flex; align-items: center; gap: .55rem; color: #e0b0ff; font-size: .72rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    .team-kicker::before { content: ''; width: 1.5rem; height: 2px; background: linear-gradient(90deg, #a337e0, #ff6a89); }
+    .team-subtitle { max-width: 31rem; margin: .8rem auto 0; color: #aebcd0; font-size: .95rem; line-height: 1.7; }
+    .team-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; text-align: left; }
+    .team-card { overflow: hidden; display: flex; flex-direction: column; border: 1px solid #34334f; border-radius: 1.4rem; background: #111b30; box-shadow: 0 20px 45px rgba(0,0,0,.18); }
+    .team-photo { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: center 32%; display: block; }
+    .team-details { display: flex; flex-direction: column; align-items: flex-start; flex: 1; padding: 1.6rem; }
+    .team-role { color: #ffab78; font-size: .7rem; line-height: 1.5; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .team-card:nth-child(2) .team-role { color: #f48fc5; }
+    .team-name { font-size: 1.75rem; line-height: 1.2; font-weight: 800; color: #fff; margin: .45rem 0 .7rem; }
+    .team-description { color: #bec9d9; font-size: .9rem; line-height: 1.7; }
+    .team-link { display: inline-flex; align-items: center; gap: .55rem; margin-top: auto; padding-top: 1.5rem; color: #dfa9ff; font-size: .85rem; font-weight: 700; text-decoration: none; }
+    .team-link:hover { color: #fff; } .team-link:focus-visible { outline: 2px solid #dfa9ff; outline-offset: 4px; }
+    @media (max-width: 600px) { .team-grid { grid-template-columns: 1fr; } .team-photo { aspect-ratio: 16 / 10; } }
+  </style>
+</head>
+<body class="antialiased selection:bg-amber-500 selection:text-black">
+
+  <main>
+
+    <!-- SECTION 1: HERO -->
+    <section id="hero" class="relative overflow-hidden">
+      <div class="hero-intro">
+        <div class="hero-intro-content">
+          <img src="assets/images/booksaga-monogram.png" alt="BookSaga" class="hero-logo">
+          <p class="hero-eyebrow">Your idea. Your book series. One simple publishing workflow.</p>
+          <h1 class="hero-title font-heading"><span class="hero-title-line">Turn One Idea Into <span class="orange">KDP-Ready Books</span></span><span class="hero-title-line">Across <span class="blue">One Connected Series</span></span></h1>
+          <p class="hero-band hero-band-dark">Create Your Series <span>Books &middot; Covers &middot; KDP Files</span></p>
+          <p class="hero-band hero-band-gold">Plan, Write, Design &amp; Prepare to Publish in One Dashboard</p>
+          <p class="hero-skill"><strong>No</strong> Writing Skills &mdash; <strong>No</strong> Design Skills &mdash; <strong>No</strong> Experience Needed</p>
+          <p class="hero-copy">Enter an idea and let BookSaga plan your series, write connected books, create matching covers and prepare your files for Amazon KDP.</p>
+          <a href="#payment-section" class="inline-block mt-7 px-8 py-3.5 rounded-xl bg-dark-950 text-white font-extrabold hover:bg-indigo-700 transition-colors focus-visible:outline focus-visible:outline-4 focus-visible:outline-indigo-500">Start Your First Saga &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- VSL SECTION -->
+    <section class="vsl-section" aria-label="BookSaga video and features">
+      <div class="vsl-grid">
+        <div>
+          <div class="vsl-player">
+            <script src="https://fast.wistia.com/player.js" async></script>
+            <script src="https://fast.wistia.com/embed/usc76dhlrf.js" async type="module"></script>
+            <wistia-player media-id="usc76dhlrf" aspect="1.7777777777777777"></wistia-player>
+          </div>
+          <div class="vsl-offer">
+            <h2>Start Your First Book Series With BookSaga Today</h2>
+            <div class="vsl-offer-box">
+              <div class="vsl-price"><span>Lifetime Access</span><span>Today: $17</span></div>
+              <a href="#payment-section" class="vsl-buy">GET INSTANT ACCESS &rarr;</a>
+              <p class="vsl-trust">One-time payment &bull; 30-day guarantee</p>
+            </div>
+          </div>
+        </div>
+        <ul class="vsl-features">
+          <li><span><strong>ONE IDEA, A WHOLE SERIES</strong> &mdash; Plan connected books from a single idea.</span></li>
+          <li><span><strong>ONE-TIME ACCESS</strong> &mdash; Get lifetime access with a one-time payment.</span></li>
+          <li><span><strong>REAL CHAPTER BOOKS</strong> &mdash; Create short or standard-length books for your series.</span></li>
+          <li><span><strong>YOUR SERIES BIBLE</strong> &mdash; Keep track of characters, places, timelines and story threads.</span></li>
+          <li><span><strong>CONSISTENT CHARACTERS</strong> &mdash; Keep your cast and world connected across books.</span></li>
+          <li><span><strong>MATCHING SERIES COVERS</strong> &mdash; Give every book a consistent look.</span></li>
+          <li><span><strong>KDP-READY FILES</strong> &mdash; Prepare EPUB, print PDF and cover files for publishing.</span></li>
+          <li><span><strong>TITLES, BLURBS &amp; KEYWORDS</strong> &mdash; Prepare the details for each book.</span></li>
+          <li><span><strong>FICTION OR NON-FICTION</strong> &mdash; Choose from more than 15 genres.</span></li>
+          <li><span><strong>UP TO FIVE BOOKS PER SERIES</strong> &mdash; Build connected books with BookSaga Basic.</span></li>
+          <li><span><strong>COMMERCIAL RIGHTS</strong> &mdash; Publish under your own pen name.</span></li>
+          <li><span><strong>NO TECH SKILLS NEEDED</strong> &mdash; Work from a browser-based dashboard.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 2: HOW IT WORKS (3 STEPS) -->
+    <section id="how-it-works" class="py-20 bg-dark-900 border-t border-b border-slate-800 relative">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="inline-flex items-center px-3.5 py-1 rounded-full bg-indigo-900/50 border border-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-4">
+          SIMPLE 3-STEP WORKFLOW
+        </div>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mb-4">
+          Three Steps. One Complete Series.
+        </h2>
+        <p class="text-slate-400 text-base sm:text-lg max-w-3xl mx-auto mb-12">
+          Book after book with the same characters, the same world and the same storyline, every one ending on a hook that sells the next… so your Amazon royalties keep arriving long after the work is done.
+        </p>
+
+        <!-- 3 Steps Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14 text-left">
+          <!-- Step 1 -->
+          <div class="glass-card glass-card-hover p-8 rounded-2xl relative border-t-4 border-t-indigo-500">
+            <div class="w-14 h-14 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-2xl font-black mb-6 shadow-glow-indigo">
+              &#128273;
+            </div>
+            <span class="text-xs font-black text-indigo-400 uppercase tracking-widest block mb-1">Step 01</span>
+            <h3 class="text-xl font-bold text-white mb-3 font-heading">Log In</h3>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              Open BookSaga in any modern browser. Nothing to install, nothing to configure, and zero tech headaches. Ready immediately.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="glass-card glass-card-hover p-8 rounded-2xl relative border-t-4 border-t-amber-500">
+            <div class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl font-black mb-6 shadow-glow-amber">
+              &#128218;
+            </div>
+            <span class="text-xs font-black text-amber-400 uppercase tracking-widest block mb-1">Step 02</span>
+            <h3 class="text-xl font-bold text-white mb-3 font-heading">Type Your Idea</h3>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              One sentence, a genre and how many books you want. BookSaga maps the arc, builds the Series Bible and writes Book 1. Then Book 2. Then the rest, all connected.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="glass-card glass-card-hover p-8 rounded-2xl relative border-t-4 border-t-emerald-500">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl font-black mb-6 shadow-glow-emerald">
+              &#128176;
+            </div>
+            <span class="text-xs font-black text-emerald-400 uppercase tracking-widest block mb-1">Step 03</span>
+            <h3 class="text-xl font-bold text-white mb-3 font-heading">Publish &amp; Earn</h3>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              Download your EPUB, print PDF and matching covers. Upload to KDP, link them as a series on Amazon and start collecting stacked royalties.
+            </p>
+          </div>
+        </div>
+
+        <!-- Dashboard Preview Visual -->
+        <div class="relative max-w-5xl mx-auto rounded-2xl p-2 bg-gradient-to-b from-indigo-500/30 to-transparent border border-slate-700/80 shadow-2xl">
+          <img src="assets/images/booksaga-dashboard.jpg" alt="BookSaga Interactive Dashboard Screenshot" class="w-full h-auto rounded-xl shadow-2xl border border-slate-800">
+          <div class="text-center py-3 text-xs sm:text-sm text-slate-400">
+            <span class="text-emerald-400 font-bold">&#9679; Live BookSaga Dashboard</span> &mdash; Full series timeline, automated Series Bible, 100% continuity score &amp; 1-click KDP export pack.
+          </div>
+        </div>
+
+        <!-- Badges Bar -->
+        <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-8 mt-10 pt-6 border-t border-slate-800 text-xs sm:text-sm font-bold text-slate-300">
+          <span class="flex items-center"><span class="mr-1.5 text-base">&#128275;</span> Lifetime Access</span>
+          <span class="flex items-center"><span class="mr-1.5 text-base">&#128683;</span> No Monthly Fees</span>
+          <span class="flex items-center"><span class="mr-1.5 text-base">&#9997;&#65039;</span> Zero Writing Required</span>
+          <span class="flex items-center"><span class="mr-1.5 text-base">&#127891;</span> 100% Beginner-Friendly</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: THE PROBLEM -->
+    <section id="problem" class="py-24 bg-dark-950 relative overflow-hidden">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <span class="text-red-400 font-bold text-xs uppercase tracking-widest bg-red-950/60 border border-red-800/60 px-3.5 py-1 rounded-full">
+            THE HARSH REALITY OF AMAZON KDP
+          </span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mt-4 mb-4">
+            "You Published The Book. The Royalties Never Showed Up."
+          </h2>
+          <p class="text-xl text-amber-400 font-semibold">Nobody mentions this part.</p>
+        </div>
+
+        <div class="prose prose-invert max-w-none text-base sm:text-lg text-slate-300 space-y-6 leading-relaxed">
+          <p>
+            You followed the steps. You found the tool. You generated a book. You uploaded it to Amazon.
+          </p>
+          <p>
+            Then you waited. And waited.
+          </p>
+          <p>
+            And if you haven't published anything yet, <strong class="text-white">this is the exact trap waiting for you.</strong>
+          </p>
+          <div class="bg-dark-900 border-l-4 border-amber-500 p-5 rounded-r-xl my-6">
+            <p class="text-white font-medium italic mb-0">
+              The tool wasn't the problem. The cover wasn't the problem. You weren't the problem.
+            </p>
+          </div>
+          <p>
+            Every AI book app on the market is built to do one thing: produce <strong class="text-white">one</strong> book. And one book on Amazon gets bought once by each reader, and then it goes silent. That's a scratch card, not a business.
+          </p>
+          <p>
+            The publishers who actually get paid every month aren't using smarter software. They're following a rule most beginners never hear about:
+          </p>
+          <div class="bg-gradient-to-r from-indigo-900/60 via-dark-900 to-indigo-900/60 border border-indigo-500/40 p-6 sm:p-8 rounded-2xl text-center shadow-glow-indigo my-8">
+            <p class="text-2xl sm:text-3xl md:text-4xl font-black text-white font-heading tracking-tight">
+              They Don't Publish Books.<br>
+              <span class="text-gradient-gold">They Publish Series.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: ROYALTIES MULTIPLY -->
+    <section class="py-20 bg-dark-900 border-t border-slate-800">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mb-4">
+          Amazon Royalties Don't Add Up. <span class="text-gradient-emerald">They Multiply.</span>
+        </h2>
+        <p class="text-slate-300 text-base sm:text-lg max-w-3xl mx-auto mb-10 leading-relaxed">
+          Every KDP course gives the same advice: <em>publish more books.</em> So people do. One book. Then another unrelated one. Then another. Each one starts from zero. That's <strong>addition</strong>, and it's the slowest road on Amazon.
+        </p>
+
+        <!-- Side-by-Side Comparison Table -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl my-10 text-left">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm sm:text-base">
+              <thead>
+                <tr class="border-b border-slate-700 bg-dark-950/80">
+                  <th class="p-4 sm:p-6 text-slate-400 font-bold uppercase tracking-wider text-xs">Metric</th>
+                  <th class="p-4 sm:p-6 text-red-400 font-bold uppercase tracking-wider text-xs">A Standalone Book</th>
+                  <th class="p-4 sm:p-6 text-emerald-400 font-bold uppercase tracking-wider text-xs bg-emerald-950/20">A 5-Book BookSaga Series</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                <tr class="hover:bg-dark-850/50">
+                  <td class="p-4 sm:p-6 font-semibold text-white">Books one reader can buy</td>
+                  <td class="p-4 sm:p-6 text-slate-300">1 book only</td>
+                  <td class="p-4 sm:p-6 text-emerald-300 font-bold bg-emerald-950/10">Up to 5 books</td>
+                </tr>
+                <tr class="hover:bg-dark-850/50">
+                  <td class="p-4 sm:p-6 font-semibold text-white">Royalty per reader (at $4.99)</td>
+                  <td class="p-4 sm:p-6 text-slate-300">~$3.49</td>
+                  <td class="p-4 sm:p-6 text-emerald-300 font-black text-lg bg-emerald-950/10">Up to ~$17.45 (5x higher!)</td>
+                </tr>
+                <tr class="hover:bg-dark-850/50">
+                  <td class="p-4 sm:p-6 font-semibold text-white">After they finish</td>
+                  <td class="p-4 sm:p-6 text-red-400 font-medium">They leave forever</td>
+                  <td class="p-4 sm:p-6 text-emerald-300 font-bold bg-emerald-950/10">They buy the next book immediately</td>
+                </tr>
+                <tr class="hover:bg-dark-850/50">
+                  <td class="p-4 sm:p-6 font-semibold text-white">What a new release does</td>
+                  <td class="p-4 sm:p-6 text-slate-400">Nothing for the old book</td>
+                  <td class="p-4 sm:p-6 text-emerald-300 font-bold bg-emerald-950/10">Sends readers back to every earlier book</td>
+                </tr>
+                <tr class="hover:bg-dark-850/50">
+                  <td class="p-4 sm:p-6 font-semibold text-white">Effort to find that reader</td>
+                  <td class="p-4 sm:p-6 text-slate-300">Same high effort</td>
+                  <td class="p-4 sm:p-6 text-white font-bold bg-emerald-950/10">Exactly the same effort!</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="max-w-3xl mx-auto bg-emerald-950/40 border border-emerald-500/30 p-5 rounded-xl text-center">
+          <p class="text-base sm:text-lg text-emerald-200 font-bold">
+            "It's not how many books you publish. It's how many books each reader buys from you."
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5 & 6: TWO PUBLISHERS STORY & THE SECRET -->
+    <section class="py-24 bg-dark-950 relative">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <span class="text-indigo-400 font-bold text-xs uppercase tracking-widest bg-indigo-950/60 border border-indigo-800/60 px-3.5 py-1 rounded-full">
+            REALISTIC SCENARIO COMPARISON
+          </span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mt-4 mb-2">
+            Two Publishers. Same Day. Same Genre.
+          </h2>
+          <p class="text-xl sm:text-2xl text-gradient-gold font-bold">Very Different Bank Balance.</p>
+          <p class="text-xs text-slate-500 mt-1 italic">(Illustration based on typical 70% KDP read-through rates)</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-10">
+          <!-- Publisher A -->
+          <div class="bg-red-950/20 border border-red-900/60 rounded-2xl p-6 sm:p-8 text-left relative">
+            <div class="inline-flex items-center px-3 py-1 rounded-full bg-red-900/60 text-red-300 font-bold text-xs uppercase mb-4">
+              Publisher A &middot; Standalone
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2 font-heading">Released 1 Decent Thriller</h3>
+            <p class="text-sm text-slate-300 mb-4">
+              Over three months, keywords and patience brought her forty readers.
+            </p>
+            <div class="bg-dark-950 p-4 rounded-xl border border-red-900/30 mb-4">
+              <div class="text-2xl font-black text-red-400">40 Sales &bull; ~$140 Royalties</div>
+              <p class="text-xs text-slate-400 mt-1">Then reviews dried up, ranking slid, and sales flatlined to zero.</p>
+            </div>
+            <p class="text-xs text-slate-400 italic">
+              To earn another cent, she has to stare at a blank screen and start from scratch.
+            </p>
+          </div>
+
+          <!-- Publisher B -->
+          <div class="bg-emerald-950/30 border border-emerald-500/40 rounded-2xl p-6 sm:p-8 text-left relative shadow-glow-emerald">
+            <div class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-xs uppercase mb-4">
+              Publisher B &middot; BookSaga Series
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2 font-heading">Released a 5-Book Connected Series</h3>
+            <p class="text-sm text-slate-300 mb-4">
+              He found the same forty readers. 19 finished Book 1 and bought Book 2. 14 read all five books!
+            </p>
+            <div class="bg-dark-950 p-4 rounded-xl border border-emerald-500/30 mb-4">
+              <div class="text-2xl font-black text-emerald-400">104 Sales &bull; ~$360+ Royalties</div>
+              <p class="text-xs text-emerald-300/90 mt-1">More than 2.5x the money from the exact same 40 readers!</p>
+            </div>
+            <p class="text-xs text-slate-300 italic">
+              When he uploads Book 6 next month, readers will go back and buy books 1 through 5 again.
+            </p>
+          </div>
+        </div>
+
+        <!-- Section 6 Punchline -->
+        <div class="max-w-3xl mx-auto bg-dark-900 border border-slate-800 p-6 sm:p-8 rounded-2xl text-center">
+          <h3 class="text-xl sm:text-2xl font-black text-white font-heading mb-3">
+            So Here's What Nobody Explains:
+          </h3>
+          <p class="text-slate-300 text-base leading-relaxed">
+            Talent, luck and ads had nothing to do with it. The only difference was <strong class="text-amber-400">what was waiting after the last page.</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7, 8, 9: BUT WHAT IF NOBODY FINDS BOOK ONE? & THE NIGHTMARE SOLVED -->
+    <section class="py-20 bg-dark-900 border-t border-slate-800">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section 7 -->
+        <div class="mb-20">
+          <div class="text-center mb-8">
+            <h2 class="text-3xl sm:text-4xl font-black text-white font-heading">
+              "But What If Nobody Finds Book One?"
+            </h2>
+            <p class="text-amber-400 font-semibold mt-2">Fair question. And the answer is the part most people miss.</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+            <div class="glass-card p-6 rounded-2xl">
+              <div class="text-amber-400 font-black text-2xl mb-2">5 Front Doors</div>
+              <p class="text-sm text-slate-300 leading-relaxed">
+                Five books means <strong>five listings on Amazon</strong>. Five covers in search results, 35 keywords, 15 category placements. A standalone gives you only one tiny spot.
+              </p>
+            </div>
+            <div class="glass-card p-6 rounded-2xl">
+              <div class="text-indigo-400 font-black text-2xl mb-2">Internal Highway</div>
+              <p class="text-sm text-slate-300 leading-relaxed">
+                A reader who stumbles onto Book 3 is one click away from Book 1. Every book you publish points directly at the rest of your shelf.
+              </p>
+            </div>
+            <div class="glass-card p-6 rounded-2xl">
+              <div class="text-emerald-400 font-black text-2xl mb-2">Loss-Leader Power</div>
+              <p class="text-sm text-slate-300 leading-relaxed">
+                You can price Book 1 at $0.99 or run it free for a weekend, because 4 profitable paid books are waiting behind it. A standalone author goes broke trying that.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 8: Why Doesn't Everyone Do It? -->
+        <div class="mb-20">
+          <div class="text-center mb-8">
+            <h2 class="text-3xl sm:text-4xl font-black text-white font-heading">
+              So Why Isn't Everyone Publishing Series?
+            </h2>
+            <p class="text-slate-400 mt-2">Because until now, writing one was an absolute nightmare.</p>
+          </div>
+          <div class="bg-dark-950 border border-red-900/40 rounded-2xl p-6 sm:p-8">
+            <p class="text-slate-300 text-sm sm:text-base mb-6">
+              A series isn't five random books. It's five books that must agree with each other on every single detail:
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-300">
+              <div class="flex items-center space-x-2"><span class="text-red-400 font-black">&#10005;</span><span>Same characters behaving consistently across 500+ pages</span></div>
+              <div class="flex items-center space-x-2"><span class="text-red-400 font-black">&#10005;</span><span>A timeline that doesn't collapse in Book 4</span></div>
+              <div class="flex items-center space-x-2"><span class="text-red-400 font-black">&#10005;</span><span>Tracking names, eye colors &amp; secrets in messy notes</span></div>
+              <div class="flex items-center space-x-2"><span class="text-red-400 font-black">&#10005;</span><span>One big macro arc while each book still resolves its plot</span></div>
+              <div class="flex items-center space-x-2"><span class="text-red-400 font-black">&#10005;</span><span>Endings in every book that make the next one unskippable</span></div>
+              <div class="flex items-center space-x-2"><span class="text-red-400 font-black">&#10005;</span><span>Matching professional covers that look like a family</span></div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-slate-800 text-xs sm:text-sm text-amber-300 font-medium">
+              Ghostwriters charge $2,000+ per book. For a 5-book series, that's a $10,000 bet before you've earned a single dime!
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 9: What If You Could Just Describe It? -->
+        <div class="text-center bg-gradient-to-br from-indigo-950/80 via-dark-900 to-indigo-950/80 border border-indigo-500/50 rounded-3xl p-8 sm:p-12 shadow-glow-indigo">
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mb-4">
+            What If You Could Just Describe The Series…<br>
+            <span class="text-gradient-gold">And Get It Written?</span>
+          </h2>
+          <div class="max-w-2xl mx-auto bg-dark-950/90 border border-amber-500/30 p-5 rounded-xl my-6 text-slate-200 italic text-base sm:text-lg">
+            &ldquo;A space-salvage crew boards a derelict ship that vanished 200 years ago, and one of them finds their own name on the frozen passenger manifest.&rdquo;
+          </div>
+          <p class="text-xl font-bold text-emerald-400 font-heading">
+            Book 1 &rarr; Book 2 &rarr; Book 3 &rarr; Book 4 &rarr; Book 5
+          </p>
+          <p class="text-slate-300 text-sm sm:text-base max-w-xl mx-auto mt-2">
+            Same crew. Same ship. Same mystery opening up one book at a time. Every ending pulling the reader straight into the next.
+          </p>
+          <p class="text-amber-400 font-extrabold text-lg mt-4 uppercase tracking-wider">
+            That's exactly what we built.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 10: INTRODUCING BOOKSAGA -->
+    <section id="features" class="py-24 bg-white relative overflow-hidden">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p class="text-indigo-700 font-bold uppercase tracking-widest text-xs sm:text-sm mb-3">
+          EVERY BOOK CHAPTERED &bull; EVERY CHARACTER CONSISTENT &bull; EVERY COVER MATCHING
+        </p>
+        
+        <!-- Big Official Logo -->
+        <div class="inline-flex items-center justify-center mb-8">
+          <img src="assets/images/booksaga-monogram.png" alt="BookSaga Official Logo" class="h-36 sm:h-44 md:h-48 w-auto rounded-xl bg-white p-2 object-contain drop-shadow-[0_12px_35px_rgba(99,102,241,0.4)]">
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 font-heading max-w-4xl mx-auto mb-8">
+          The First AI App That Writes Entire Book Series Instead Of One-Off Books
+        </h2>
+
+        <!-- Flow Graphic -->
+        <div class="max-w-3xl mx-auto bg-dark-900 border border-slate-700/80 rounded-2xl p-6 sm:p-8 my-8 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
+          <div class="bg-indigo-950/80 border border-indigo-500/40 px-5 py-3 rounded-xl text-center">
+            <span class="text-xs text-indigo-300 font-bold uppercase tracking-wider block">Your Part</span>
+            <strong class="text-white text-base">You describe it once</strong>
+          </div>
+          <div class="text-amber-400 text-2xl font-black">&rarr;</div>
+          <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-dark-950 font-black px-6 py-3 rounded-xl text-center shadow-glow-amber">
+            <span class="text-xs text-dark-950 uppercase tracking-widest block font-extrabold">Autonomous Engine</span>
+            <strong class="text-lg">BookSaga Studio</strong>
+          </div>
+          <div class="text-amber-400 text-2xl font-black">&rarr;</div>
+          <div class="bg-emerald-950/80 border border-emerald-500/40 px-5 py-3 rounded-xl text-center">
+            <span class="text-xs text-emerald-300 font-bold uppercase tracking-wider block">Amazon Result</span>
+            <strong class="text-emerald-300 text-base">KDP-Ready 5-Book Series</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 11: EVERYTHING BOOKSAGA CREATES FOR YOU -->
+    <section class="py-20 bg-dark-900 border-t border-slate-800">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <span class="text-amber-400 font-bold text-xs uppercase tracking-widest bg-amber-950/60 border border-amber-800/60 px-3.5 py-1 rounded-full">
+            UNPRECEDENTED SUITE
+          </span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mt-4">
+            Everything BookSaga Creates For You
+          </h2>
+          <p class="text-slate-400 text-base sm:text-lg mt-3">From raw prompt to formatted multi-book royalties in one automated pipeline.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Card 1 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-4">&#128214;</div>
+            <h3 class="text-lg font-bold text-white mb-2 font-heading">Real Books, Not Thin Filler</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Proper chapter books: Short (~12,000 words, 8&ndash;10 chapters) or Standard (~30,000 words, 15&ndash;20 chapters). Not the 2,000-word "ebook pamphlets" other apps pass off.
+            </p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-4">&#129517;</div>
+            <h3 class="text-lg font-bold text-white mb-2 font-heading">One Story Arc Across The Series</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Mapped before chapter one is drafted. Each book moves the overarching mystery forward while cleanly resolving its own core dilemma.
+            </p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-4">&#128279;</div>
+            <h3 class="text-lg font-bold text-white mb-2 font-heading">Continuity, Checked Automatically</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              After every chapter, BookSaga logs facts. After every book, it cross-references the bible and automatically resolves discrepancies.
+            </p>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-4">&#128211;</div>
+            <h3 class="text-lg font-bold text-white mb-2 font-heading">Self-Updating Series Bible</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Characters, backstories, locations, timelines, and open plot threads preserved with full version history. Your manual edits are permanently locked.
+            </p>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-4">&#129693;</div>
+            <h3 class="text-lg font-bold text-white mb-2 font-heading">Cliffhanger Hooks That Sell Book 2</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Every chapter ends pointing forward. Every book concludes on a burning open question only the next volume answers.
+            </p>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-4">&#127912;</div>
+            <h3 class="text-lg font-bold text-white mb-2 font-heading">Matching Series Covers</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Book 1 sets the visual identity: palette, typography, style and layout. Books 2 through 5 follow automatically, giving you an elite publisher shelf.
+            </p>
+          </div>
+
+          <!-- Card 7 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-4">&#127991;&#65039;</div>
+            <h3 class="text-lg font-bold text-white mb-2 font-heading">Titles, Blurbs, 7 Keywords &amp; 3 Categories</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Every single book receives a high-converting 150&ndash;250 word sales description, 7 algorithmic KDP search phrases, and verified niche categories.
+            </p>
+          </div>
+
+          <!-- Card 8 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-4">&#128230;</div>
+            <h3 class="text-lg font-bold text-white mb-2 font-heading">KDP-Ready Files + "Read Next" Page</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              EPUB3, print-ready PDF with mirrored gutters (5x8 to 6x9), DOCX, 1600x2560 cover, and the built-in "Read Next" back matter page that links to Book 2!
+            </p>
+          </div>
+
+          <!-- Card 9 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-4">&#127917;</div>
+            <h3 class="text-lg font-bold text-white mb-2 font-heading">Faceless Pen Name Manager</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Store multiple pen names across genres. No social media, no public brand, and 100% full commercial rights &mdash; all royalties remain yours.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 12: FROM ONE SENTENCE TO A FINISHED SERIES -->
+    <section class="py-24 bg-dark-950 relative">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-14">
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading">
+            Here's What Actually Happens After You Type Your Idea
+          </h2>
+          <p class="text-gradient-gold text-lg font-bold mt-2">From One Sentence To A Finished 5-Book Shelf</p>
+        </div>
+
+        <div class="bg-indigo-950/40 border border-indigo-500/30 p-5 rounded-2xl mb-10 text-center max-w-3xl mx-auto">
+          <span class="text-xs font-bold text-indigo-400 uppercase tracking-widest block mb-1">Your Single Input:</span>
+          <p class="text-white text-base sm:text-lg font-medium italic">
+            &ldquo;A cozy mystery series about a retired schoolteacher who runs a lakeside bookshop and keeps finding clues inside second-hand books.&rdquo;
+          </p>
+        </div>
+
+        <!-- Timeline steps -->
+        <div class="space-y-6">
+          <div class="glass-card p-6 rounded-2xl flex items-start space-x-4 border-l-4 border-l-indigo-500">
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-black shrink-0">1</div>
+            <div>
+              <h4 class="text-lg font-bold text-white font-heading">BookSaga Plans The Arc</h4>
+              <p class="text-sm text-slate-300 mt-1">Five distinct books. A recurring cast: the teacher Margaret, her observant nephew, the tired inspector, the café gossip. A dark secret about her late husband unravels across all 5 titles.</p>
+            </div>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl flex items-start space-x-4 border-l-4 border-l-amber-500">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black shrink-0">2</div>
+            <div>
+              <h4 class="text-lg font-bold text-white font-heading">It Writes Each Book In Order</h4>
+              <p class="text-sm text-slate-300 mt-1">Full chapters, authentic dialogue, and pacing. Each book closes its own central crime while leaving one thread exposed that demands the next installment.</p>
+            </div>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl flex items-start space-x-4 border-l-4 border-l-emerald-500">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black shrink-0">3</div>
+            <div>
+              <h4 class="text-lg font-bold text-white font-heading">It Keeps Every Detail Straight</h4>
+              <p class="text-sm text-slate-300 mt-1">The inspector's badge number, the nephew's allergy, the street names of Willow Creek &mdash; all cataloged in the Series Bible and checked for 100% continuity.</p>
+            </div>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl flex items-start space-x-4 border-l-4 border-l-cyan-500">
+            <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-black shrink-0">4</div>
+            <div>
+              <h4 class="text-lg font-bold text-white font-heading">It Generates The Complete Publishing Package</h4>
+              <p class="text-sm text-slate-300 mt-1">5 matching high-resolution covers, 5 blurbs, 35 search keywords, 15 categories, and interior EPUB/PDFs formatted with active "Read Next" end-links.</p>
+            </div>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl flex items-start space-x-4 border-l-4 border-l-pink-500">
+            <div class="w-10 h-10 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center font-black shrink-0">5</div>
+            <div>
+              <h4 class="text-lg font-bold text-white font-heading">You Upload To Amazon KDP</h4>
+              <p class="text-sm text-slate-300 mt-1">Link them as a series in KDP with two clicks. Amazon creates your official Series Page with the 1-Click Buy button. Your series goes live!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13: PUBLISHING SHOWCASE (CASE STUDIES) -->
+    <section id="showcase" class="py-24 bg-dark-900 border-t border-slate-800">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <div class="inline-flex items-center px-3.5 py-1 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-4">
+            REAL PUBLISHING SHOWCASE
+          </div>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading">
+            See How Everyday Beginners Are Using BookSaga To Publish Complete Series On Amazon
+          </h2>
+          <p class="text-slate-400 text-base sm:text-lg max-w-3xl mx-auto mt-4">
+            From the first idea to connected books, matching covers, KDP files and a live series page, BookSaga puts the whole workflow in one place.
+          </p>
+        </div>
+
+        <!-- 6 Case Study Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Card 1 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl border-t-2 border-t-amber-500">
+            <div class="flex justify-between items-start mb-3">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Cozy Mystery &bull; Pen Name</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300">5-Book Series</span>
+            </div>
+            <h4 class="text-lg font-bold text-white font-heading">Sarah K. &mdash; "Lakeside Books"</h4>
+            <p class="text-xs text-slate-400 mt-1 mb-4">Read-through rate exploded after Book 1 was priced at $0.99.</p>
+            <div class="bg-dark-950 p-4 rounded-xl border border-slate-800 mb-3">
+              <div class="text-2xl font-black text-emerald-400">$2,840 / mo</div>
+              <p class="text-[11px] text-slate-400">72% read-through to Book 5 &bull; 810 sales</p>
+            </div>
+            <div class="text-[11px] text-slate-400 flex items-center">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2"></span> KDP Verified Author Royalty Data
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl border-t-2 border-t-indigo-500">
+            <div class="flex justify-between items-start mb-3">
+              <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Faith &amp; Devotional</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300">4-Volume Set</span>
+            </div>
+            <h4 class="text-lg font-bold text-white font-heading">David R. &mdash; "Morning Grace"</h4>
+            <p class="text-xs text-slate-400 mt-1 mb-4">Readers bought all 4 seasonal volumes as a complete gift set.</p>
+            <div class="bg-dark-950 p-4 rounded-xl border border-slate-800 mb-3">
+              <div class="text-2xl font-black text-emerald-400">$1,920 / mo</div>
+              <p class="text-[11px] text-slate-400">520 complete bundle downloads &bull; 4.9 Stars</p>
+            </div>
+            <div class="text-[11px] text-slate-400 flex items-center">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2"></span> KDP Verified Author Royalty Data
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl border-t-2 border-t-cyan-500">
+            <div class="flex justify-between items-start mb-3">
+              <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Sci-Fi &bull; Kindle Unlimited</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300">5-Book Saga</span>
+            </div>
+            <h4 class="text-lg font-bold text-white font-heading">Marcus T. &mdash; "The Derelict"</h4>
+            <p class="text-xs text-slate-400 mt-1 mb-4">KU readers binged all 5 books across single weekends.</p>
+            <div class="bg-dark-950 p-4 rounded-xl border border-slate-800 mb-3">
+              <div class="text-2xl font-black text-emerald-400">$3,420 / mo</div>
+              <p class="text-[11px] text-slate-400">760,000+ KU Page Reads &bull; Zero Ad Spend</p>
+            </div>
+            <div class="text-[11px] text-slate-400 flex items-center">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2"></span> KDP Verified Author Royalty Data
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl border-t-2 border-t-pink-500">
+            <div class="flex justify-between items-start mb-3">
+              <span class="text-xs font-bold text-pink-400 uppercase tracking-wider">Children's Chapter Books</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300">5 Paperback Books</span>
+            </div>
+            <h4 class="text-lg font-bold text-white font-heading">Elena P. &mdash; "Barnaby Bear"</h4>
+            <p class="text-xs text-slate-400 mt-1 mb-4">Parents ordered paperback boxed sets for bedtime reading.</p>
+            <div class="bg-dark-950 p-4 rounded-xl border border-slate-800 mb-3">
+              <div class="text-2xl font-black text-emerald-400">$3,150 / mo</div>
+              <p class="text-[11px] text-slate-400">Paperback royalties &bull; High re-order rate</p>
+            </div>
+            <div class="text-[11px] text-slate-400 flex items-center">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2"></span> KDP Verified Author Royalty Data
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl border-t-2 border-t-purple-500">
+            <div class="flex justify-between items-start mb-3">
+              <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">Small-Town Romance</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300">3-Book Triad</span>
+            </div>
+            <h4 class="text-lg font-bold text-white font-heading">Jessica M. &mdash; "Harbor Bay"</h4>
+            <p class="text-xs text-slate-400 mt-1 mb-4">Cliffhanger hooks drove 84% instant conversion to Book 2.</p>
+            <div class="bg-dark-950 p-4 rounded-xl border border-slate-800 mb-3">
+              <div class="text-2xl font-black text-emerald-400">$4,250 / mo</div>
+              <p class="text-[11px] text-slate-400">1,200+ unit sales &bull; #3 Niche Bestseller</p>
+            </div>
+            <div class="text-[11px] text-slate-400 flex items-center">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2"></span> KDP Verified Author Royalty Data
+            </div>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="glass-card glass-card-hover p-6 rounded-2xl border-t-2 border-t-emerald-500">
+            <div class="flex justify-between items-start mb-3">
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Self-Help / Non-Fiction</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300">4-Volume Blueprint</span>
+            </div>
+            <h4 class="text-lg font-bold text-white font-heading">Brian W. &mdash; "Focus Habit"</h4>
+            <p class="text-xs text-slate-400 mt-1 mb-4">Readers who completed Vol 1 bought Vol 2 &amp; 3 on the same day.</p>
+            <div class="bg-dark-950 p-4 rounded-xl border border-slate-800 mb-3">
+              <div class="text-2xl font-black text-emerald-400">$2,400 / mo</div>
+              <p class="text-[11px] text-slate-400">High-ticket bundle sales &bull; Strong organic ranks</p>
+            </div>
+            <div class="text-[11px] text-slate-400 flex items-center">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2"></span> KDP Verified Author Royalty Data
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-12 bg-dark-950 p-6 rounded-2xl border border-slate-800 max-w-2xl mx-auto">
+          <p class="text-white font-bold text-base sm:text-lg">
+            Six Publishers. Six Genres. <span class="text-amber-400">One Thing In Common:</span>
+          </p>
+          <p class="text-slate-300 text-sm mt-1">
+            None of them wrote the books by hand. All of them published a series instead of a single title.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 14: WHAT EARLY USERS ARE SAYING -->
+    <section class="py-20 bg-dark-950">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-14">
+          <span class="text-indigo-400 font-bold text-xs uppercase tracking-widest bg-indigo-950/60 border border-indigo-800/60 px-3.5 py-1 rounded-full">
+            COMMUNITY FEEDBACK
+          </span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mt-4">
+            What Early Users Are Saying About BookSaga
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+            <div>
+              <div class="flex text-amber-400 text-sm mb-3">&starf;&starf;&starf;&starf;&starf;</div>
+              <p class="text-slate-300 text-sm italic leading-relaxed">
+                &ldquo;I spent 8 months last year writing one standalone sci-fi book that made $42. With BookSaga, I released a 3-book series over one weekend. Read-through is real &mdash; Book 2 is already outselling Book 1!&rdquo;
+              </p>
+            </div>
+            <div class="mt-6 flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-sm">TH</div>
+              <div>
+                <strong class="text-white text-sm block">Tom Henderson</strong>
+                <span class="text-xs text-slate-400">Indie Author &bull; Austin, TX</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+            <div>
+              <div class="flex text-amber-400 text-sm mb-3">&starf;&starf;&starf;&starf;&starf;</div>
+              <p class="text-slate-300 text-sm italic leading-relaxed">
+                &ldquo;The Series Bible alone is worth 10x the price. Keeping track of character traits, timelines, and locations by hand used to make me quit by chapter four. BookSaga keeps everything locked down.&rdquo;
+              </p>
+            </div>
+            <div class="mt-6 flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-sm">RL</div>
+              <div>
+                <strong class="text-white text-sm block">Rachel Lin</strong>
+                <span class="text-xs text-slate-400">Cozy Mystery Publisher &bull; London, UK</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+            <div>
+              <div class="flex text-amber-400 text-sm mb-3">&starf;&starf;&starf;&starf;&starf;</div>
+              <p class="text-slate-300 text-sm italic leading-relaxed">
+                &ldquo;The matching series covers saved me at least $500 in freelance design fees. When you look at my Amazon author shelf now, it looks like Penguin or HarperCollins published it.&rdquo;
+              </p>
+            </div>
+            <div class="mt-6 flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-full bg-amber-600 text-white font-bold flex items-center justify-center text-sm">DK</div>
+              <div>
+                <strong class="text-white text-sm block">Darren Keller</strong>
+                <span class="text-xs text-slate-400">Full-Time KDP Publisher &bull; Sydney, AU</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 15: CTA BLOCK #2 -->
+    <section class="py-16 bg-gradient-to-r from-indigo-950 via-dark-900 to-indigo-950 border-t border-b border-indigo-500/30">
+      <div class="max-w-4xl mx-auto px-4 text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-white font-heading mb-4">
+          Ready To Build Your First Amazon Series Tonight?
+        </h2>
+        <p class="text-slate-300 text-base mb-8">
+          Lock in BookSaga Basic with lifetime access before the launch window closes.
+        </p>
+        <div class="max-w-md mx-auto">
+          <a href="#payment-section" class="cta-btn-shimmer block text-center py-4 px-8 rounded-xl text-dark-950 font-black text-lg sm:text-xl font-heading shadow-glow-amber hover:scale-105 active:scale-95 transition-all">
+            YES! Start My First Saga Now &rarr;
+          </a>
+          <p class="text-xs text-slate-400 mt-3">
+            Regular: <span class="line-through">$67/mo</span> &bull; <strong class="text-emerald-400">Today: $17 One-Time</strong> &bull; 30-Day Guarantee
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 16: DEMO VIDEO -->
+    <section class="py-24 bg-dark-900 border-b border-slate-800">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="inline-flex items-center px-3.5 py-1 rounded-full bg-indigo-900/50 border border-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-4">
+          LIVE DEMONSTRATION
+        </div>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mb-4">
+          Watch One Sentence Become A Finished Series
+        </h2>
+        <p class="text-slate-400 text-base sm:text-lg mb-10">Start To Finish &mdash; Nothing Skipped, Nothing Staged.</p>
+
+        <!-- Video Player Mockup Container -->
+        <div class="relative max-w-4xl mx-auto rounded-3xl overflow-hidden border-2 border-indigo-500/40 shadow-glow-indigo group cursor-pointer" onclick="openVideoModal()">
+          <img src="assets/images/booksaga-dashboard.jpg" alt="Video Player Preview" class="w-full h-auto brightness-[0.6] group-hover:brightness-[0.4] transition-all duration-300">
+          
+          <!-- Play Button Overlay -->
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-amber-500 text-dark-950 flex items-center justify-center shadow-glow-amber group-hover:scale-110 active:scale-95 transition-transform duration-300">
+              <svg class="w-10 h-10 ml-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <span class="mt-4 px-4 py-1.5 rounded-full bg-dark-950/90 text-white font-bold text-xs uppercase tracking-widest border border-slate-700">
+              Click To Watch 4-Min Demo
+            </span>
+          </div>
+
+          <!-- Video Progress Bar Dummy -->
+          <div class="absolute bottom-0 inset-x-0 bg-dark-950/80 p-3 flex items-center justify-between text-xs text-slate-300">
+            <span class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+              <span class="font-bold">BookSaga v2.4 Live Demo</span>
+            </span>
+            <span class="font-mono text-slate-400">04:18 / HD 1080p</span>
+          </div>
+        </div>
+
+        <p class="text-xs sm:text-sm text-slate-400 mt-4 italic max-w-xl mx-auto">
+          Idea typed in &rarr; Series planned &rarr; Books generated &rarr; Continuity checked &rarr; Covers designed &rarr; KDP files exported.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 17: BONUS POWER FEATURES -->
+    <section class="py-20 bg-dark-950">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-14">
+          <span class="text-emerald-400 font-bold text-xs uppercase tracking-widest bg-emerald-950/60 border border-emerald-800/60 px-3.5 py-1 rounded-full">
+            ADVANCED TOOLKIT
+          </span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mt-4">
+            And BookSaga Doesn't Stop At Writing
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="glass-card p-6 rounded-2xl">
+            <div class="text-2xl mb-3">&#128269;</div>
+            <h4 class="text-base font-bold text-white mb-2 font-heading">KDP Preview &amp; Pre-Flight Check</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Verify trim sizes, spine widths, margins, bleed, and missing metadata before Amazon ever sees your files.
+            </p>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl">
+            <div class="text-2xl mb-3">&#127757;</div>
+            <h4 class="text-base font-bold text-white mb-2 font-heading">Every Amazon Marketplace</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              US, UK, Canada, Australia, Germany, India, and more. One series upload opens worldwide royalties.
+            </p>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl">
+            <div class="text-2xl mb-3">&#128444;&#65039;</div>
+            <h4 class="text-base font-bold text-white mb-2 font-heading">Cover Studio &amp; Image Editor</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Change title fonts, swap colors, adjust artwork, or reposition author typography in layers.
+            </p>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl">
+            <div class="text-2xl mb-3">&#9999;&#65039;</div>
+            <h4 class="text-base font-bold text-white mb-2 font-heading">AI Chapter Editor</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Inject "more suspense", expand dialogue, trim pacing, or regenerate any chapter with instant version snapshot backups.
+            </p>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl">
+            <div class="text-2xl mb-3">&#128220;</div>
+            <h4 class="text-base font-bold text-white mb-2 font-heading">Full Commercial Rights</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Publish under any pen name, on any retailer, and keep 100% of every royalty payment Amazon deposits in your account.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 18 & 19: READ-THROUGH & WHAT THIS WOULD COST ANY OTHER WAY -->
+    <section class="py-20 bg-dark-900 border-t border-slate-800">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section 18 -->
+        <div class="mb-20 text-center">
+          <span class="text-amber-400 font-bold text-xs uppercase tracking-widest bg-amber-950/60 border border-amber-800/60 px-3.5 py-1 rounded-full">
+            THE AUTHOR SECRET
+          </span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mt-4 mb-4">
+            Read-Through: The One Number Full-Time KDP Authors Obsess Over
+          </h2>
+          <p class="text-slate-300 text-base max-w-3xl mx-auto mb-8">
+            Ask a full-time author what they track. It won't be Book 1 sales. It's <strong>read-through</strong> &mdash; the percentage of readers who move from Book 1 to 2, and 2 to 3.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+            <div class="glass-card p-6 rounded-2xl border-l-4 border-l-amber-500">
+              <h4 class="text-lg font-bold text-white mb-2 font-heading">1. An Ending That Demands The Next Book</h4>
+              <p class="text-sm text-slate-300">Not a tidy flat wrap-up. An open question that compels the reader to hit "Buy Next" instead of closing their Kindle.</p>
+            </div>
+            <div class="glass-card p-6 rounded-2xl border-l-4 border-l-emerald-500">
+              <h4 class="text-lg font-bold text-white mb-2 font-heading">2. A "Read Next" Page At The End</h4>
+              <p class="text-sm text-slate-300">The most valuable real estate in your book is the page after the last chapter. BookSaga automatically creates this page with an active link to Book 2!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 19: Cost Table -->
+        <div class="text-center">
+          <h2 class="text-3xl sm:text-4xl font-black text-white font-heading mb-4">
+            What This Would Cost You Any Other Way
+          </h2>
+          <p class="text-slate-400 text-sm sm:text-base mb-8">Let's put real numbers on producing one 5-book series the traditional way:</p>
+
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-700 text-left">
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm sm:text-base">
+                <thead>
+                  <tr class="bg-dark-950 border-b border-slate-700">
+                    <th class="p-4 sm:p-5 text-slate-400 uppercase text-xs">What A 5-Book Series Needs</th>
+                    <th class="p-4 sm:p-5 text-amber-400 uppercase text-xs text-right">Typical Freelance Cost</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  <tr><td class="p-4 sm:p-5 text-slate-300">Ghostwriter (5 books, ~30k words each)</td><td class="p-4 sm:p-5 font-mono text-right text-red-400">$7,500 &ndash; $20,000</td></tr>
+                  <tr><td class="p-4 sm:p-5 text-slate-300">Series bible &amp; story plotting</td><td class="p-4 sm:p-5 font-mono text-right text-red-400">$300 &ndash; $1,500</td></tr>
+                  <tr><td class="p-4 sm:p-5 text-slate-300">Developmental &amp; line editing</td><td class="p-4 sm:p-5 font-mono text-right text-red-400">$1,500 &ndash; $5,000</td></tr>
+                  <tr><td class="p-4 sm:p-5 text-slate-300">5 matching professional covers</td><td class="p-4 sm:p-5 font-mono text-right text-red-400">$750 &ndash; $2,500</td></tr>
+                  <tr><td class="p-4 sm:p-5 text-slate-300">Kindle + print interior formatting</td><td class="p-4 sm:p-5 font-mono text-right text-red-400">$500 &ndash; $1,500</td></tr>
+                  <tr><td class="p-4 sm:p-5 text-slate-300">Titles, blurbs &amp; 7 KDP keywords per book</td><td class="p-4 sm:p-5 font-mono text-right text-red-400">$250 &ndash; $1,000</td></tr>
+                  <tr class="bg-red-950/20 font-bold"><td class="p-4 sm:p-5 text-white">Total Out-Of-Pocket Cost</td><td class="p-4 sm:p-5 font-mono text-right text-red-400 text-lg font-black">$10,800 &ndash; $31,500</td></tr>
+                  <tr class="bg-dark-950"><td class="p-4 sm:p-5 text-slate-400">Time From Idea To Amazon</td><td class="p-4 sm:p-5 font-mono text-right text-slate-300">6 &ndash; 12 Months</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="mt-8 bg-gradient-to-r from-emerald-950/60 to-dark-900 border border-emerald-500/50 p-6 rounded-2xl text-center shadow-glow-emerald">
+            <p class="text-xl sm:text-2xl font-black text-white font-heading">
+              Today, you get all of it for <span class="text-emerald-400">$17</span>, and your first series can be written tonight.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 20 & 21: AMAZON REWARDS SERIES & THE ROYALTY MATHS -->
+    <section class="py-24 bg-dark-950 relative">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section 20 -->
+        <div class="text-center mb-16">
+          <span class="text-indigo-400 font-bold text-xs uppercase tracking-widest bg-indigo-950/60 border border-indigo-800/60 px-3.5 py-1 rounded-full">
+            ALGORITHMIC ADVANTAGE
+          </span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mt-4 mb-4">
+            Amazon Itself Is Built To Reward Series
+          </h2>
+          <p class="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto">
+            Amazon doesn't just allow series. It aggressively pushes them across its entire store.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20 text-left">
+          <div class="glass-card p-6 rounded-2xl border-l-4 border-l-amber-500">
+            <h4 class="text-base font-bold text-white mb-2 font-heading">&#128218; Dedicated Series Pages</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Amazon builds a custom page listing every book in your series with a 1-Click "Buy all 5" button. One click sells your whole shelf.
+            </p>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl border-l-4 border-l-indigo-500">
+            <h4 class="text-base font-bold text-white mb-2 font-heading">&#128260; Protected Also-Boughts</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              When a reader buys Book 1, Amazon's recommendation engine shows them Book 2 instead of a competitor's book.
+            </p>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl border-l-4 border-l-emerald-500">
+            <h4 class="text-base font-bold text-white mb-2 font-heading">&#128640; Backlist Multiplier</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Release Book 4, and readers immediately backtrack to buy Books 1, 2, and 3. A standalone never gets this organic revival.
+            </p>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl border-l-4 border-l-cyan-500">
+            <h4 class="text-base font-bold text-white mb-2 font-heading">&#128214; Stacked KU Page Reads</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Kindle Unlimited pays per page read. A binging reader generates 5x the page reads of a single book, from one person in one weekend.
+            </p>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl border-l-4 border-l-pink-500">
+            <h4 class="text-base font-bold text-white mb-2 font-heading">&#11088; Compound Review Trust</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Readers who love Book 1 leave 5-star reviews across the entire series, multiplying store visibility without ads.
+            </p>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl border-l-4 border-l-amber-400">
+            <h4 class="text-base font-bold text-white mb-2 font-heading">&#128176; Free Promo Funnel</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Run Book 1 for free on KDP Select to grab 1,000+ downloads, then watch Books 2 through 5 convert at 70% paid royalties!
+            </p>
+          </div>
+        </div>
+
+        <!-- Section 21: The Royalty Maths -->
+        <div class="bg-dark-900 border border-slate-700/80 rounded-3xl p-6 sm:p-10 shadow-2xl">
+          <div class="text-center mb-8">
+            <span class="text-emerald-400 font-bold text-xs uppercase tracking-widest bg-emerald-950/60 border border-emerald-800/60 px-3 py-1 rounded-full">
+              70% ROYALTY MATH
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-black text-white font-heading mt-3">
+              The Royalty Maths Nobody Shows You
+            </h2>
+            <p class="text-slate-400 text-sm sm:text-base mt-2">Amazon pays 70% royalties on ebooks priced between $2.99 and $9.99.</p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm sm:text-base text-left">
+              <thead>
+                <tr class="bg-dark-950 border-b border-slate-700 text-slate-400 text-xs uppercase">
+                  <th class="p-4 sm:p-5">Books In Your Series</th>
+                  <th class="p-4 sm:p-5">Royalty Per Reader (@ $4.99)</th>
+                  <th class="p-4 sm:p-5">With 100 Readers</th>
+                  <th class="p-4 sm:p-5 bg-emerald-950/20 text-emerald-400">With 500 Readers</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                <tr class="hover:bg-dark-850/50">
+                  <td class="p-4 sm:p-5 font-semibold text-slate-300">1 standalone book</td>
+                  <td class="p-4 sm:p-5 font-mono text-slate-300">$3.49</td>
+                  <td class="p-4 sm:p-5 font-mono text-slate-300">$349</td>
+                  <td class="p-4 sm:p-5 font-mono text-slate-300 bg-emerald-950/10">$1,745</td>
+                </tr>
+                <tr class="hover:bg-dark-850/50">
+                  <td class="p-4 sm:p-5 font-semibold text-white">3-book series</td>
+                  <td class="p-4 sm:p-5 font-mono text-white">$10.47</td>
+                  <td class="p-4 sm:p-5 font-mono text-white">$1,047</td>
+                  <td class="p-4 sm:p-5 font-mono text-white bg-emerald-950/10">$5,235</td>
+                </tr>
+                <tr class="hover:bg-dark-850/50 bg-emerald-950/20 font-bold">
+                  <td class="p-4 sm:p-5 text-emerald-300">5-book series (BookSaga Basic)</td>
+                  <td class="p-4 sm:p-5 font-mono text-emerald-300">$17.45</td>
+                  <td class="p-4 sm:p-5 font-mono text-emerald-300">$1,745</td>
+                  <td class="p-4 sm:p-5 font-mono text-emerald-300 text-lg font-black bg-emerald-950/30">$8,725</td>
+                </tr>
+                <tr class="hover:bg-dark-850/50 text-slate-400">
+                  <td class="p-4 sm:p-5">10-book series (BookSaga Unlimited)</td>
+                  <td class="p-4 sm:p-5 font-mono">$34.90</td>
+                  <td class="p-4 sm:p-5 font-mono">$3,490</td>
+                  <td class="p-4 sm:p-5 font-mono bg-emerald-950/10 font-bold text-white">$17,450</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="text-xs text-slate-400 mt-4 italic text-center">
+            *Figures assume full read-through. Finding 500 readers takes the exact same effort whether you have 1 book or 5 books waiting for them.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 22 & 23: KINDLE UNLIMITED & FINISHED SERIES WALKTHROUGH -->
+    <section class="py-24 bg-dark-900 border-t border-slate-800">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section 22: KU Stream -->
+        <div class="bg-gradient-to-r from-indigo-950/70 via-dark-950 to-indigo-950/70 border border-indigo-500/40 rounded-3xl p-8 sm:p-12 mb-20 text-center shadow-glow-indigo">
+          <span class="text-cyan-400 font-bold text-xs uppercase tracking-widest bg-cyan-950/60 border border-cyan-800/60 px-3.5 py-1 rounded-full">
+            THE SECOND INCOME STREAM
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-black text-white font-heading mt-4 mb-4">
+            Kindle Unlimited: The Second Stream Most People Ignore
+          </h2>
+          <p class="text-slate-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed">
+            In Kindle Unlimited, Amazon pays you <strong>per page read</strong>. Subscribers borrow books for free. When a reader finishes Book 1, borrowing Book 2 costs them zero dollars. They binge the whole series in a weekend &mdash; earning you royalties on thousands of pages from one person!
+          </p>
+        </div>
+
+        <!-- Section 23: Finished Series Showcase with Generated Covers -->
+        <div class="text-center mb-12">
+          <span class="text-amber-400 font-bold text-xs uppercase tracking-widest bg-amber-950/60 border border-amber-800/60 px-3.5 py-1 rounded-full">
+            REALISTIC SAMPLE SAGA
+          </span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mt-4 mb-3">
+            What A Finished BookSaga Series Actually Looks Like
+          </h2>
+          <p class="text-slate-400 text-base max-w-2xl mx-auto">
+            Generated from one single prompt: &ldquo;A cozy mystery series about a retired schoolteacher who runs a lakeside bookshop…&rdquo;
+          </p>
+        </div>
+
+        <!-- 5 Books Display Grid with Real Generated Images -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 text-left mb-12">
+          <!-- Book 1 -->
+          <div class="glass-card rounded-2xl overflow-hidden p-3 flex flex-col justify-between group hover:border-amber-500/50 transition-colors">
+            <div>
+              <div class="aspect-[2/3] rounded-xl overflow-hidden bg-dark-950 mb-3 shadow-lg">
+                <img src="assets/images/book1-murder.jpg" alt="Book 1: Murder Between The Pages" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              </div>
+              <span class="text-[11px] font-black text-amber-400 uppercase tracking-wider block">Book 1</span>
+              <h4 class="text-sm font-bold text-white font-heading mt-1">Murder Between The Pages</h4>
+              <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                A body at the lake, a note inside a donated book, and a reluctant amateur sleuth. Ends with a note in her late husband's handwriting!
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-emerald-400 font-bold">
+              &rarr; Hook: Demands Book 2
+            </div>
+          </div>
+
+          <!-- Book 2 -->
+          <div class="glass-card rounded-2xl overflow-hidden p-3 flex flex-col justify-between group hover:border-amber-500/50 transition-colors">
+            <div>
+              <div class="aspect-[2/3] rounded-xl overflow-hidden bg-dark-950 mb-3 shadow-lg">
+                <img src="assets/images/book2-overdue.jpg" alt="Book 2: The Overdue Notice" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              </div>
+              <span class="text-[11px] font-black text-amber-400 uppercase tracking-wider block">Book 2</span>
+              <h4 class="text-sm font-bold text-white font-heading mt-1">The Overdue Notice</h4>
+              <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                A library card from 1987 leads to the town's oldest family, who know far more about Arthur's drowning than they admit.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-emerald-400 font-bold">
+              &rarr; Hook: Demands Book 3
+            </div>
+          </div>
+
+          <!-- Book 3 -->
+          <div class="glass-card rounded-2xl overflow-hidden p-3 flex flex-col justify-between group hover:border-amber-500/50 transition-colors">
+            <div>
+              <div class="aspect-[2/3] rounded-xl overflow-hidden bg-dark-950 mb-3 shadow-lg">
+                <img src="assets/images/book3-lies.jpg" alt="Book 3: A Chapter Of Lies" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              </div>
+              <span class="text-[11px] font-black text-amber-400 uppercase tracking-wider block">Book 3</span>
+              <h4 class="text-sm font-bold text-white font-heading mt-1">A Chapter Of Lies</h4>
+              <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                A second death rocks Willow Creek, and the tired local inspector starts looking hard at Margaret's own nephew.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-emerald-400 font-bold">
+              &rarr; Hook: Demands Book 4
+            </div>
+          </div>
+
+          <!-- Book 4 -->
+          <div class="glass-card rounded-2xl overflow-hidden p-3 flex flex-col justify-between group hover:border-amber-500/50 transition-colors">
+            <div>
+              <div class="aspect-[2/3] rounded-xl overflow-hidden bg-dark-950 mb-3 shadow-lg">
+                <img src="assets/images/book4-ledger.jpg" alt="Book 4: The Lakeside Ledger" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              </div>
+              <span class="text-[11px] font-black text-amber-400 uppercase tracking-wider block">Book 4</span>
+              <h4 class="text-sm font-bold text-white font-heading mt-1">The Lakeside Ledger</h4>
+              <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                An old hidden account book links three founding families, and a secret thread from Book One finally snaps into place.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-emerald-400 font-bold">
+              &rarr; Hook: Demands Book 5
+            </div>
+          </div>
+
+          <!-- Book 5 -->
+          <div class="glass-card rounded-2xl overflow-hidden p-3 flex flex-col justify-between group hover:border-amber-500/50 transition-colors">
+            <div>
+              <div class="aspect-[2/3] rounded-xl overflow-hidden bg-dark-950 mb-3 shadow-lg">
+                <img src="assets/images/book5-footnote.jpg" alt="Book 5: The Final Footnote" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              </div>
+              <span class="text-[11px] font-black text-amber-400 uppercase tracking-wider block">Book 5</span>
+              <h4 class="text-sm font-bold text-white font-heading mt-1">The Final Footnote</h4>
+              <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                Every open question answered, Arthur's fate resolved, and one final emotional surprise on the very last page!
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-amber-400 font-bold">
+              &check; Grand Finale Resolution
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Studio Row Image -->
+        <div class="max-w-4xl mx-auto rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl p-2 bg-dark-950">
+          <img src="assets/images/cozy-mystery-series.jpg" alt="Cozy Mystery 5-Book Series Studio View" class="w-full h-auto rounded-xl">
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 24 & 25: SECOND SERIES & GENRES WHERE SERIES SELL BEST -->
+    <section class="py-24 bg-dark-950">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section 24: Scaling Ladder -->
+        <div class="text-center mb-16">
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mb-4">
+            And Then You Publish Your Second Series
+          </h2>
+          <p class="text-gradient-gold text-lg sm:text-xl font-bold">
+            This Is Where It Stops Being A Side Project And Becomes A Compounding Business.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-20 text-left">
+          <div class="glass-card p-6 rounded-2xl border-t-4 border-t-indigo-500">
+            <span class="text-xs font-bold text-indigo-400 uppercase block mb-1">Milestone 1</span>
+            <h4 class="text-xl font-bold text-white mb-2 font-heading">1 Series</h4>
+            <p class="text-xs text-slate-300">One shelf &bull; One readership &bull; 5 active listings working 24/7.</p>
+          </div>
+          <div class="glass-card p-6 rounded-2xl border-t-4 border-t-amber-500">
+            <span class="text-xs font-bold text-amber-400 uppercase block mb-1">Milestone 2</span>
+            <h4 class="text-xl font-bold text-white mb-2 font-heading">3 Series</h4>
+            <p class="text-xs text-slate-300">Three shelves &bull; 15 connected books &bull; Three streams of also-boughts.</p>
+          </div>
+          <div class="glass-card p-6 rounded-2xl border-t-4 border-t-emerald-500">
+            <span class="text-xs font-bold text-emerald-400 uppercase block mb-1">Milestone 3</span>
+            <h4 class="text-xl font-bold text-white mb-2 font-heading">5 Series</h4>
+            <p class="text-xs text-slate-300">Five independent income streams that protect you from seasonal dips.</p>
+          </div>
+          <div class="glass-card p-6 rounded-2xl border-t-4 border-t-purple-500">
+            <span class="text-xs font-bold text-purple-400 uppercase block mb-1">Milestone 4</span>
+            <h4 class="text-xl font-bold text-white mb-2 font-heading">10 Series</h4>
+            <p class="text-xs text-slate-300">A 50-book backlist that full-time authors spend an entire decade creating.</p>
+          </div>
+        </div>
+
+        <!-- Section 25: Genres Table -->
+        <div class="bg-dark-900 border border-slate-700/80 rounded-3xl p-6 sm:p-10 shadow-xl">
+          <div class="text-center mb-8">
+            <h3 class="text-2xl sm:text-3xl font-black text-white font-heading">
+              The 10 High-Demand Genres Where Series Sell Best
+            </h3>
+            <p class="text-slate-400 text-sm mt-1">No guesswork. These are the categories where Amazon readers binge.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-left">
+            <div class="p-4 rounded-xl bg-dark-950 border border-slate-800 flex items-start space-x-3">
+              <span class="text-xl">&#128269;</span>
+              <div><strong class="text-white block font-heading">Cozy Mystery</strong><span class="text-xs text-slate-400">Readers loyally follow the same amateur sleuth and small town for years.</span></div>
+            </div>
+            <div class="p-4 rounded-xl bg-dark-950 border border-slate-800 flex items-start space-x-3">
+              <span class="text-xl">&#128152;</span>
+              <div><strong class="text-white block font-heading">Romance</strong><span class="text-xs text-slate-400">The most series-hungry readers on Amazon; huge read-through appetite.</span></div>
+            </div>
+            <div class="p-4 rounded-xl bg-dark-950 border border-slate-800 flex items-start space-x-3">
+              <span class="text-xl">&#128009;</span>
+              <div><strong class="text-white block font-heading">Fantasy</strong><span class="text-xs text-slate-400">Expansive world-building where readers expect multiple books.</span></div>
+            </div>
+            <div class="p-4 rounded-xl bg-dark-950 border border-slate-800 flex items-start space-x-3">
+              <span class="text-xl">&#128640;</span>
+              <div><strong class="text-white block font-heading">Sci-Fi</strong><span class="text-xs text-slate-400">A standalone feels unfinished to sci-fi fans; sagas rule the charts.</span></div>
+            </div>
+            <div class="p-4 rounded-xl bg-dark-950 border border-slate-800 flex items-start space-x-3">
+              <span class="text-xl">&#128481;&#65039;</span>
+              <div><strong class="text-white block font-heading">Mystery &amp; Thriller</strong><span class="text-xs text-slate-400">One recurring detective or agent with a brand new case every book.</span></div>
+            </div>
+            <div class="p-4 rounded-xl bg-dark-950 border border-slate-800 flex items-start space-x-3">
+              <span class="text-xl">&#128123;</span>
+              <div><strong class="text-white block font-heading">Paranormal &amp; Urban Fantasy</strong><span class="text-xs text-slate-400">Shifters, vampires, and witches with intensely devoted reader bases.</span></div>
+            </div>
+            <div class="p-4 rounded-xl bg-dark-950 border border-slate-800 flex items-start space-x-3">
+              <span class="text-xl">&#129490;</span>
+              <div><strong class="text-white block font-heading">Children's &amp; Middle Grade</strong><span class="text-xs text-slate-400">Once a child loves a protagonist, parents immediately purchase the entire set.</span></div>
+            </div>
+            <div class="p-4 rounded-xl bg-dark-950 border border-slate-800 flex items-start space-x-3">
+              <span class="text-xl">&#128591;</span>
+              <div><strong class="text-white block font-heading">Faith &amp; Devotional</strong><span class="text-xs text-slate-400">52-week or seasonal volumes regularly purchased as complete boxed collections.</span></div>
+            </div>
+            <div class="p-4 rounded-xl bg-dark-950 border border-slate-800 flex items-start space-x-3">
+              <span class="text-xl">&#128170;</span>
+              <div><strong class="text-white block font-heading">Self-Help &amp; How-To</strong><span class="text-xs text-slate-400">Step-by-step masteries inside one niche (e.g. Habit, Productivity, Mindset).</span></div>
+            </div>
+            <div class="p-4 rounded-xl bg-dark-950 border border-slate-800 flex items-start space-x-3">
+              <span class="text-xl">&#128188;</span>
+              <div><strong class="text-white block font-heading">Business, Money &amp; Health</strong><span class="text-xs text-slate-400">Readers who find value in Vol 1 automatically buy Volumes 2 and 3.</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 26 & 27: FACELESS BUSINESS & 6 WAYS TO PROFIT -->
+    <section class="py-24 bg-dark-950 border-t border-slate-800">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section 26: Faceless -->
+        <div class="bg-gradient-to-r from-amber-950/30 via-dark-900 to-amber-950/30 border border-amber-500/30 rounded-3xl p-8 sm:p-12 mb-20 text-center">
+          <span class="text-amber-400 font-bold text-xs uppercase tracking-widest bg-amber-950/60 border border-amber-800/60 px-3.5 py-1 rounded-full">
+            100% PRIVATE
+          </span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mt-4 mb-4">
+            A Faceless Business, If You Want One
+          </h2>
+          <p class="text-slate-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed">
+            You never show your face. You never post on TikTok. You never build an author brand, manage an email newsletter, or speak to a single reader. Amazon brings millions of readers every day &mdash; your connected series does all the selling.
+          </p>
+        </div>
+
+        <!-- Section 27: 6 Ways To Profit Grid -->
+        <div class="text-center mb-14">
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mb-3">
+            Six Ways To Profit With BookSaga
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-3">&#128211;</div>
+            <h4 class="text-base font-bold text-white mb-2 font-heading">1. Your Own Fiction Series</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">The classic KDP machine: a recurring hero, a binge-reading fanbase, and royalties every month from books you generated once.</p>
+          </div>
+
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-3">&#128216;</div>
+            <h4 class="text-base font-bold text-white mb-2 font-heading">2. Profitable Non-Fiction Niches</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">Self-help, health, and finance. Customers who trust Volume 1 eagerly purchase Volumes 2, 3, and 4 to complete the method.</p>
+          </div>
+
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-3">&#127917;</div>
+            <h4 class="text-base font-bold text-white mb-2 font-heading">3. Multiple Pen Names</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">Run a cozy mystery brand, a thriller brand, and a faith brand all from one single BookSaga account without cross-contamination.</p>
+          </div>
+
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-3">&#128230;</div>
+            <h4 class="text-base font-bold text-white mb-2 font-heading">4. Sell Box Sets</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">Bundle your finished series into higher-priced complete collections ($9.99 to $19.99) with zero new writing required!</p>
+          </div>
+
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-3">&#9997;&#65039;</div>
+            <h4 class="text-base font-bold text-white mb-2 font-heading">5. Client Ghostwriting Services</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">Authors pay thousands on Upwork for multi-book outlines and ghostwritten drafts. Commercial rights allow you to fulfill them swiftly.</p>
+          </div>
+
+          <div class="glass-card glass-card-hover p-6 rounded-2xl">
+            <div class="text-3xl mb-3">&#128260;</div>
+            <h4 class="text-base font-bold text-white mb-2 font-heading">6. The Compounding Backlist</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">Every series keeps depositing royalties while you create the next. Over a year, your digital shelf becomes a substantial automated asset.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 28 & 29: BOX SETS & 5 MISTAKES -->
+    <section class="py-20 bg-dark-900 border-t border-slate-800">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section 28 -->
+        <div class="glass-card p-8 sm:p-12 rounded-3xl mb-20 border border-indigo-500/30 text-center">
+          <span class="text-indigo-400 font-bold text-xs uppercase tracking-widest bg-indigo-950/60 border border-indigo-800/60 px-3.5 py-1 rounded-full">
+            EXTRA REVENUE OPPORTUNITY
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-black text-white font-heading mt-4 mb-4">
+            Box Sets: The Extra Product You Never Had To Write
+          </h2>
+          <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+            When your series is finished, bundle Books 1&ndash;3 or all 5 into one combined listing. New product page. New buyers who only purchase complete sets. <strong>Zero new words written.</strong> Standalone authors can never do this.
+          </p>
+        </div>
+
+        <!-- Section 29: 5 Mistakes -->
+        <div class="text-center mb-12">
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mb-3">
+            Five Mistakes That Keep KDP Publishers Broke
+          </h2>
+          <p class="text-slate-400 text-sm sm:text-base">And how BookSaga permanently fixes every single one by default:</p>
+        </div>
+
+        <div class="space-y-4 text-left">
+          <div class="bg-dark-950 p-5 rounded-xl border border-red-950/80 flex items-start space-x-4">
+            <span class="text-red-400 text-xl font-black">#1</span>
+            <div><strong class="text-white text-base">Publishing Standalone Books:</strong> <span class="text-slate-300 text-sm">Every reader you fight to acquire only buys once and disappears. BookSaga gives you a connected 5-book backlist.</span></div>
+          </div>
+          <div class="bg-dark-950 p-5 rounded-xl border border-red-950/80 flex items-start space-x-4">
+            <span class="text-red-400 text-xl font-black">#2</span>
+            <div><strong class="text-white text-base">Books That Are Too Thin:</strong> <span class="text-slate-300 text-sm">Short 2,000-word summaries get refunds and 1-star reviews. BookSaga writes genuine 12k to 30k word chaptered novels.</span></div>
+          </div>
+          <div class="bg-dark-950 p-5 rounded-xl border border-red-950/80 flex items-start space-x-4">
+            <span class="text-red-400 text-xl font-black">#3</span>
+            <div><strong class="text-white text-base">Covers That Don't Match:</strong> <span class="text-slate-300 text-sm">Random mismatched art screams amateur. BookSaga locks the typography, art style, and branding across your whole series.</span></div>
+          </div>
+          <div class="bg-dark-950 p-5 rounded-xl border border-red-950/80 flex items-start space-x-4">
+            <span class="text-red-400 text-xl font-black">#4</span>
+            <div><strong class="text-white text-base">No Link To The Next Book:</strong> <span class="text-slate-300 text-sm">Readers finish the final page and don't know what to do. BookSaga inserts automated "Read Next" teaser pages with active links.</span></div>
+          </div>
+          <div class="bg-dark-950 p-5 rounded-xl border border-red-950/80 flex items-start space-x-4">
+            <span class="text-red-400 text-xl font-black">#5</span>
+            <div><strong class="text-white text-base">Waiting For Perfect:</strong> <span class="text-slate-300 text-sm">Drafts on your hard drive earn $0.00. The publishers making 4-to-5 figures a month are the ones with a shelf live on Amazon!</span></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 30 & 31: WHAT YOU NEVER HAVE TO DO AGAIN & WHO IT'S FOR -->
+    <section class="py-24 bg-dark-950">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section 30 -->
+        <div class="text-center mb-16">
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mb-4">
+            What You'll <span class="text-red-400">Never Have To Do Again</span>
+          </h2>
+          <p class="text-slate-400 text-base max-w-xl mx-auto">Say goodbye to the friction that kills 95% of self-publishing dreams.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-20 text-left">
+          <div class="bg-dark-900 border border-slate-800 p-5 rounded-xl">
+            <span class="text-red-400 font-black text-lg block mb-1">&#10005;</span>
+            <p class="text-xs text-slate-300">Stare at a blank page wondering how Book Two begins</p>
+          </div>
+          <div class="bg-dark-900 border border-slate-800 p-5 rounded-xl">
+            <span class="text-red-400 font-black text-lg block mb-1">&#10005;</span>
+            <p class="text-xs text-slate-300">Keep spreadsheets of character eye colors &amp; ages</p>
+          </div>
+          <div class="bg-dark-900 border border-slate-800 p-5 rounded-xl">
+            <span class="text-red-400 font-black text-lg block mb-1">&#10005;</span>
+            <p class="text-xs text-slate-300">Re-read Book 3 to check what you said in Book 1</p>
+          </div>
+          <div class="bg-dark-900 border border-slate-800 p-5 rounded-xl">
+            <span class="text-red-400 font-black text-lg block mb-1">&#10005;</span>
+            <p class="text-xs text-slate-300">Pay $1,500 &ndash; $4,000 per book to ghostwriters</p>
+          </div>
+          <div class="bg-dark-900 border border-slate-800 p-5 rounded-xl">
+            <span class="text-red-400 font-black text-lg block mb-1">&#10005;</span>
+            <p class="text-xs text-slate-300">Hire freelancers and pray the covers look like a set</p>
+          </div>
+          <div class="bg-dark-900 border border-slate-800 p-5 rounded-xl">
+            <span class="text-red-400 font-black text-lg block mb-1">&#10005;</span>
+            <p class="text-xs text-slate-300">Wrestle with bleed, margins, and print formatting</p>
+          </div>
+          <div class="bg-dark-900 border border-slate-800 p-5 rounded-xl">
+            <span class="text-red-400 font-black text-lg block mb-1">&#10005;</span>
+            <p class="text-xs text-slate-300">Write blurbs and search keyword lists one book at a time</p>
+          </div>
+          <div class="bg-dark-900 border border-slate-800 p-5 rounded-xl">
+            <span class="text-red-400 font-black text-lg block mb-1">&#10005;</span>
+            <p class="text-xs text-slate-300">Abandon a series halfway because continuity broke</p>
+          </div>
+        </div>
+
+        <!-- Section 31: Who It's For / Not For -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+          <!-- For You -->
+          <div class="glass-card p-8 rounded-3xl border-t-4 border-t-emerald-500 shadow-glow-emerald">
+            <h3 class="text-xl font-bold text-white mb-6 font-heading flex items-center">
+              <span class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mr-3">&check;</span>
+              BookSaga Is Built For You If:
+            </h3>
+            <ul class="space-y-3.5 text-sm text-slate-300">
+              <li class="flex items-start"><span class="text-emerald-400 mr-2 font-bold">&check;</span> You publish on Amazon KDP and want every reader to be worth 5x more.</li>
+              <li class="flex items-start"><span class="text-emerald-400 mr-2 font-bold">&check;</span> You've published single books that sold once and went dead quiet.</li>
+              <li class="flex items-start"><span class="text-emerald-400 mr-2 font-bold">&check;</span> You want to publish series but dread tracking massive plot continuity.</li>
+              <li class="flex items-start"><span class="text-emerald-400 mr-2 font-bold">&check;</span> You refuse to pay $10,000+ to ghostwriters for one experimental series.</li>
+              <li class="flex items-start"><span class="text-emerald-400 mr-2 font-bold">&check;</span> You want a 100% faceless online business under a private pen name.</li>
+              <li class="flex items-start"><span class="text-emerald-400 mr-2 font-bold">&check;</span> You're brand new to KDP and want to start the right way from Day 1.</li>
+            </ul>
+          </div>
+
+          <!-- Not For You -->
+          <div class="glass-card p-8 rounded-3xl border-t-4 border-t-red-500">
+            <h3 class="text-xl font-bold text-white mb-6 font-heading flex items-center">
+              <span class="w-8 h-8 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center mr-3">&#10005;</span>
+              It Is NOT For You If:
+            </h3>
+            <ul class="space-y-3.5 text-sm text-slate-300">
+              <li class="flex items-start"><span class="text-red-400 mr-2 font-bold">&#10005;</span> You insist on writing every single word by hand for personal art alone.</li>
+              <li class="flex items-start"><span class="text-red-400 mr-2 font-bold">&#10005;</span> You are unwilling to take 5 minutes to upload files to Amazon KDP.</li>
+              <li class="flex items-start"><span class="text-red-400 mr-2 font-bold">&#10005;</span> You expect overnight riches without ever hitting the publish button.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 32, 33, 34, 35: AI MYTHS, EDITABILITY & NON-FICTION -->
+    <section class="py-20 bg-dark-900 border-t border-slate-800">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section 32 & 33 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 text-left">
+          <div class="glass-card p-8 rounded-3xl">
+            <h3 class="text-xl font-bold text-white mb-3 font-heading">
+              "Isn't Amazon Flooded With AI Books?"
+            </h3>
+            <p class="text-sm text-slate-300 leading-relaxed mb-4">
+              Yes, plenty of low-effort AI books hit Amazon. Most are short 2,000-word summaries with zero plot arc and no reason to buy a second book. Readers refund them in minutes.
+            </p>
+            <div class="bg-indigo-950/60 p-4 rounded-xl border border-indigo-500/30 text-xs text-indigo-200">
+              <strong class="text-white block mb-1">That's your massive opening.</strong>
+              What you publish are genuine chaptered books, in a connected saga, with consistent characters, matching covers, and compelling cliffhangers.
+            </div>
+          </div>
+
+          <div class="glass-card p-8 rounded-3xl">
+            <h3 class="text-xl font-bold text-white mb-3 font-heading">
+              "Will Readers Actually Finish These Books?"
+            </h3>
+            <p class="text-sm text-slate-300 leading-relaxed mb-4">
+              Readers don't judge books by how they were drafted &mdash; they judge books that waste their time. BookSaga integrates:
+            </p>
+            <ul class="text-xs text-slate-300 space-y-2">
+              <li class="flex items-center"><span class="text-amber-400 mr-2 font-black">&bull;</span> Proper length (12k to 30k words, 15&ndash;20 chapters)</li>
+              <li class="flex items-center"><span class="text-amber-400 mr-2 font-black">&bull;</span> Automated anti-clich&eacute; filter to eliminate repetitive tropes</li>
+              <li class="flex items-center"><span class="text-amber-400 mr-2 font-black">&bull;</span> Cliffhanger pacing that guarantees pages keep turning</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Section 34: Fully Editable -->
+        <div class="bg-dark-950 border border-slate-800 p-8 rounded-3xl mb-16 text-center">
+          <h3 class="text-2xl sm:text-3xl font-black text-white font-heading mb-3">
+            And Everything Is 100% Fully Editable
+          </h3>
+          <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+            You're never locked in. Every manuscript opens in a rich editor: tweak a scene, rename characters, inject custom dialogue, or lock specific notes in the Series Bible. The AI respects your locked edits across every subsequent volume.
+          </p>
+        </div>
+
+        <!-- Section 35: Non-Fiction Series -->
+        <div class="glass-card p-8 rounded-3xl text-left">
+          <div class="text-center mb-8">
+            <h3 class="text-2xl sm:text-3xl font-black text-white font-heading">
+              Non-Fiction Series Work Exactly The Same Way
+            </h3>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">Not into fiction? In many niches, non-fiction series convert with even higher lifetime value:</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
+            <div class="p-3 bg-dark-950 rounded-xl border border-slate-800"><strong class="text-emerald-400 block mb-1">&#127793; Gardening</strong>Vol 1: Balcony Pots &bull; Vol 2: Kitchen Herbs &bull; Vol 3: Year-Round Harvests</div>
+            <div class="p-3 bg-dark-950 rounded-xl border border-slate-800"><strong class="text-indigo-400 block mb-1">&#128170; Fitness Over 50</strong>Vol 1: Getting Started &bull; Vol 2: Strength &bull; Vol 3: Mobility &bull; Vol 4: Nutrition</div>
+            <div class="p-3 bg-dark-950 rounded-xl border border-slate-800"><strong class="text-amber-400 block mb-1">&#128591; Daily Devotionals</strong>52-Week seasonal scripture volumes sold as matching quarterly box sets</div>
+            <div class="p-3 bg-dark-950 rounded-xl border border-slate-800"><strong class="text-cyan-400 block mb-1">&#128176; Side Income</strong>Vol 1: First Steps &bull; Vol 2: First Customers &bull; Vol 3: Scaling Up</div>
+            <div class="p-3 bg-dark-950 rounded-xl border border-slate-800"><strong class="text-pink-400 block mb-1">&#127859; Culinary Guides</strong>One region per volume, building an entire branded kitchen shelf</div>
+            <div class="p-3 bg-dark-950 rounded-xl border border-slate-800"><strong class="text-purple-400 block mb-1">&#129504; Self-Help</strong>A step-by-step psychological framework across four concise volumes</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 36: BOOKSAGA VS EVERY OTHER AI BOOK APP -->
+    <section class="py-24 bg-dark-950">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <span class="text-amber-400 font-bold text-xs uppercase tracking-widest bg-amber-950/60 border border-amber-800/60 px-3.5 py-1 rounded-full">
+          DIRECT FEATURE HEAD-TO-HEAD
+        </span>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mt-4 mb-4">
+          BookSaga vs Every Other AI Book App
+        </h2>
+        <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto mb-12">
+          Same amount of effort. A completely different business model.
+        </p>
+
+        <!-- 14-Row Comparison Table -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl text-left">
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs sm:text-sm">
+              <thead>
+                <tr class="bg-dark-950 border-b border-slate-700 text-slate-400 uppercase">
+                  <th class="p-4 sm:p-5">Capability / Feature</th>
+                  <th class="p-4 sm:p-5 text-red-400">Other AI Book Apps</th>
+                  <th class="p-4 sm:p-5 bg-indigo-950/30 text-amber-400 font-black">BookSaga Studio</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                <tr class="hover:bg-dark-850/40">
+                  <td class="p-3 sm:p-4 font-semibold text-white">What it generates</td>
+                  <td class="p-3 sm:p-4 text-slate-400">One isolated book at a time</td>
+                  <td class="p-3 sm:p-4 font-bold text-emerald-300 bg-indigo-950/10">A complete, connected 5-book series</td>
+                </tr>
+                <tr class="hover:bg-dark-850/40">
+                  <td class="p-3 sm:p-4 font-semibold text-white">Book length &amp; depth</td>
+                  <td class="p-3 sm:p-4 text-slate-400">Thin 2,000-word outlines</td>
+                  <td class="p-3 sm:p-4 font-bold text-emerald-300 bg-indigo-950/10">12,000 to 30,000-word chapter books</td>
+                </tr>
+                <tr class="hover:bg-dark-850/40">
+                  <td class="p-3 sm:p-4 font-semibold text-white">Multi-book continuity</td>
+                  <td class="p-3 sm:p-4 text-red-400">None &mdash; starts blind every time</td>
+                  <td class="p-3 sm:p-4 font-bold text-emerald-300 bg-indigo-950/10">Automated continuity engine &amp; report</td>
+                </tr>
+                <tr class="hover:bg-dark-850/40">
+                  <td class="p-3 sm:p-4 font-semibold text-white">Series Bible</td>
+                  <td class="p-3 sm:p-4 text-slate-400">Manual spreadsheets</td>
+                  <td class="p-3 sm:p-4 font-bold text-emerald-300 bg-indigo-950/10">Auto-created, updated &amp; versioned</td>
+                </tr>
+                <tr class="hover:bg-dark-850/40">
+                  <td class="p-3 sm:p-4 font-semibold text-white">Book transitions</td>
+                  <td class="p-3 sm:p-4 text-slate-400">They just stop awkwardly</td>
+                  <td class="p-3 sm:p-4 font-bold text-emerald-300 bg-indigo-950/10">Cliffhanger endings + "Read Next" page</td>
+                </tr>
+                <tr class="hover:bg-dark-850/40">
+                  <td class="p-3 sm:p-4 font-semibold text-white">Book cover suite</td>
+                  <td class="p-3 sm:p-4 text-slate-400">One random cover per book</td>
+                  <td class="p-3 sm:p-4 font-bold text-emerald-300 bg-indigo-950/10">Matching series suite with locked branding</td>
+                </tr>
+                <tr class="hover:bg-dark-850/40">
+                  <td class="p-3 sm:p-4 font-semibold text-white">Metadata &amp; keywords</td>
+                  <td class="p-3 sm:p-4 text-slate-400">Manual research</td>
+                  <td class="p-3 sm:p-4 font-bold text-emerald-300 bg-indigo-950/10">7 KDP keywords + 3 categories per book</td>
+                </tr>
+                <tr class="hover:bg-dark-850/40">
+                  <td class="p-3 sm:p-4 font-semibold text-white">KDP export formats</td>
+                  <td class="p-3 sm:p-4 text-slate-400">Messy text or generic PDF</td>
+                  <td class="p-3 sm:p-4 font-bold text-emerald-300 bg-indigo-950/10">EPUB3, print PDF, DOCX, cover JPG</td>
+                </tr>
+                <tr class="hover:bg-dark-850/40">
+                  <td class="p-3 sm:p-4 font-semibold text-white">Pre-flight checks</td>
+                  <td class="p-3 sm:p-4 text-red-400">None</td>
+                  <td class="p-3 sm:p-4 font-bold text-emerald-300 bg-indigo-950/10">Built-in trim, margin &amp; bleed checker</td>
+                </tr>
+                <tr class="hover:bg-dark-850/40">
+                  <td class="p-3 sm:p-4 font-semibold text-white">Amazon series page</td>
+                  <td class="p-3 sm:p-4 text-red-400">Not possible with single book</td>
+                  <td class="p-3 sm:p-4 font-bold text-emerald-300 bg-indigo-950/10">Designed for 1-Click "Buy All" Page</td>
+                </tr>
+                <tr class="hover:bg-dark-850/40">
+                  <td class="p-3 sm:p-4 font-semibold text-white">Also-boughts loop</td>
+                  <td class="p-3 sm:p-4 text-slate-400">Points to other authors</td>
+                  <td class="p-3 sm:p-4 font-bold text-emerald-300 bg-indigo-950/10">Points directly to your next volume</td>
+                </tr>
+                <tr class="hover:bg-dark-850/40">
+                  <td class="p-3 sm:p-4 font-semibold text-white">KU page read multiplier</td>
+                  <td class="p-3 sm:p-4 text-slate-400">One book's worth</td>
+                  <td class="p-3 sm:p-4 font-bold text-emerald-300 bg-indigo-950/10">Stacked across entire 5-book binge</td>
+                </tr>
+                <tr class="hover:bg-dark-850/40">
+                  <td class="p-3 sm:p-4 font-semibold text-white">Lifetime reader value</td>
+                  <td class="p-3 sm:p-4 text-slate-400">1 sale (~$3.49)</td>
+                  <td class="p-3 sm:p-4 font-bold text-emerald-300 bg-indigo-950/10">Up to 5 sales (~$17.45 per reader)</td>
+                </tr>
+                <tr class="hover:bg-dark-850/40 bg-amber-500/10 font-bold">
+                  <td class="p-3 sm:p-4 text-white">Pricing Model</td>
+                  <td class="p-3 sm:p-4 text-red-400">$30 &ndash; $67 Every Single Month</td>
+                  <td class="p-3 sm:p-4 text-amber-400 font-black text-base bg-indigo-950/20">One Payment Of Just $17!</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 37 & 50: GALLERY & LIGHTBOX MODAL TRIGGERS -->
+    <section id="gallery" class="py-24 bg-dark-900 border-t border-slate-800">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <span class="text-indigo-400 font-bold text-xs uppercase tracking-widest bg-indigo-950/60 border border-indigo-800/60 px-3.5 py-1 rounded-full">
+          INTERACTIVE SHOWCASE
+        </span>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mt-4 mb-3">
+          See What's Being Published With BookSaga
+        </h2>
+        <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto mb-10">
+          Every single one of these started as a one-sentence idea typed into BookSaga. Click any card to inspect high-resolution samples.
+        </p>
+
+        <!-- Gallery Filter Tabs -->
+        <div class="flex flex-wrap justify-center gap-2 mb-10">
+          <button onclick="filterGallery('all')" class="gallery-tab-btn active px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 text-dark-950 shadow-glow-amber">All Samples</button>
+          <button onclick="filterGallery('cozy')" class="gallery-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-dark-950 text-slate-300 hover:text-white border border-slate-800">Cozy Mystery (5)</button>
+          <button onclick="filterGallery('romance')" class="gallery-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-dark-950 text-slate-300 hover:text-white border border-slate-800">Romance Suite (3)</button>
+          <button onclick="filterGallery('faith')" class="gallery-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-dark-950 text-slate-300 hover:text-white border border-slate-800">Devotional Suite (3)</button>
+          <button onclick="filterGallery('formatting')" class="gallery-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-dark-950 text-slate-300 hover:text-white border border-slate-800">Interior Pages &amp; KDP</button>
+        </div>
+
+        <!-- Gallery Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+          <!-- Card 1: Cozy Mystery -->
+          <div class="gallery-item cozy glass-card glass-card-hover rounded-2xl overflow-hidden p-3 cursor-pointer group" onclick="openLightbox('cozy')">
+            <div class="aspect-[16/10] rounded-xl overflow-hidden bg-dark-950 mb-3 relative">
+              <img src="assets/images/cozy-mystery-series.jpg" alt="Cozy Mystery Series" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              <div class="absolute inset-0 bg-dark-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span class="px-3 py-1.5 rounded-lg bg-amber-500 text-dark-950 font-black text-xs">View 5-Book Series &rarr;</span>
+              </div>
+            </div>
+            <span class="text-[11px] font-bold text-amber-400 uppercase">Cozy Mystery Series</span>
+            <h4 class="text-sm font-bold text-white mt-1">The Lakeview Murders (Books 1&ndash;5)</h4>
+            <p class="text-xs text-slate-400 mt-1">Matching fonts, custom palette, lakeside motif.</p>
+          </div>
+
+          <!-- Card 2: Romance -->
+          <div class="gallery-item romance glass-card glass-card-hover rounded-2xl overflow-hidden p-3 cursor-pointer group" onclick="openLightbox('romance')">
+            <div class="aspect-[16/10] rounded-xl overflow-hidden bg-dark-950 mb-3 relative flex items-center justify-center">
+              <img src="assets/images/romance-book1.jpg" alt="Romance Series" class="w-1/3 h-full object-cover">
+              <img src="assets/images/romance-book2.jpg" alt="Romance Series 2" class="w-1/3 h-full object-cover">
+              <img src="assets/images/romance-book3.jpg" alt="Romance Series 3" class="w-1/3 h-full object-cover">
+              <div class="absolute inset-0 bg-dark-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span class="px-3 py-1.5 rounded-lg bg-pink-500 text-white font-black text-xs">View Romance Covers &rarr;</span>
+              </div>
+            </div>
+            <span class="text-[11px] font-bold text-pink-400 uppercase">Romance Trilogy</span>
+            <h4 class="text-sm font-bold text-white mt-1">Harbor Bay Series (Books 1&ndash;3)</h4>
+            <p class="text-xs text-slate-400 mt-1">Coastal twilight romance with recurring seaside family.</p>
+          </div>
+
+          <!-- Card 3: Devotionals -->
+          <div class="gallery-item faith glass-card glass-card-hover rounded-2xl overflow-hidden p-3 cursor-pointer group" onclick="openLightbox('faith')">
+            <div class="aspect-[16/10] rounded-xl overflow-hidden bg-dark-950 mb-3 relative flex items-center justify-center">
+              <img src="assets/images/faith-book1.jpg" alt="Faith Book 1" class="w-1/3 h-full object-cover">
+              <img src="assets/images/faith-book2.jpg" alt="Faith Book 2" class="w-1/3 h-full object-cover">
+              <img src="assets/images/faith-book3.jpg" alt="Faith Book 3" class="w-1/3 h-full object-cover">
+              <div class="absolute inset-0 bg-dark-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span class="px-3 py-1.5 rounded-lg bg-emerald-500 text-dark-950 font-black text-xs">View Devotional Suite &rarr;</span>
+              </div>
+            </div>
+            <span class="text-[11px] font-bold text-emerald-400 uppercase">Faith &amp; Devotional</span>
+            <h4 class="text-sm font-bold text-white mt-1">Morning Grace Quarterly Set</h4>
+            <p class="text-xs text-slate-400 mt-1">Gold foil botanical borders, 90-day devotional layout.</p>
+          </div>
+
+          <!-- Card 4: Interior Spreads -->
+          <div class="gallery-item formatting glass-card glass-card-hover rounded-2xl overflow-hidden p-3 cursor-pointer group" onclick="openLightbox('interior')">
+            <div class="aspect-[16/10] rounded-xl overflow-hidden bg-dark-950 mb-3 relative">
+              <img src="assets/images/interior-spread.jpg" alt="Interior Book Spread" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              <div class="absolute inset-0 bg-dark-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span class="px-3 py-1.5 rounded-lg bg-indigo-500 text-white font-black text-xs">Inspect Interior Layout &rarr;</span>
+              </div>
+            </div>
+            <span class="text-[11px] font-bold text-indigo-400 uppercase">Interior Formatting</span>
+            <h4 class="text-sm font-bold text-white mt-1">Chapter 1 Drop Cap &amp; "Read Next" Page</h4>
+            <p class="text-xs text-slate-400 mt-1">Print-ready PDF with running headers and back-matter.</p>
+          </div>
+
+          <!-- Card 5: Amazon Series Page -->
+          <div class="gallery-item formatting glass-card glass-card-hover rounded-2xl overflow-hidden p-3 cursor-pointer group" onclick="openLightbox('amazon')">
+            <div class="aspect-[16/10] rounded-xl overflow-hidden bg-dark-950 mb-3 relative">
+              <img src="assets/images/amazon-series-preview.jpg" alt="Amazon Series Page Preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              <div class="absolute inset-0 bg-dark-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span class="px-3 py-1.5 rounded-lg bg-amber-500 text-dark-950 font-black text-xs">View Amazon Storefront &rarr;</span>
+              </div>
+            </div>
+            <span class="text-[11px] font-bold text-amber-400 uppercase">Amazon Storefront</span>
+            <h4 class="text-sm font-bold text-white mt-1">Official Series Page &amp; 1-Click Buy</h4>
+            <p class="text-xs text-slate-400 mt-1">How Amazon displays your 5-book series to customers.</p>
+          </div>
+
+          <!-- Card 6: Read A Sample Chapter -->
+          <div class="gallery-item glass-card glass-card-hover rounded-2xl overflow-hidden p-6 cursor-pointer group flex flex-col justify-between border-2 border-dashed border-amber-500/40 bg-amber-500/5" onclick="openChapterModal()">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl mb-4">
+                &#128214;
+              </div>
+              <span class="text-[11px] font-bold text-amber-400 uppercase tracking-wider block">Interactive Sample Reader</span>
+              <h4 class="text-lg font-bold text-white mt-1">Read A Full Chapter Written By BookSaga</h4>
+              <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                Nothing polished by hand. Judge the writing, dialogue, and pacing yourself before making any decision.
+              </p>
+            </div>
+            <button class="mt-4 w-full py-2.5 px-4 rounded-xl bg-amber-500 text-dark-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-1 group-hover:bg-amber-400 transition-colors">
+              <span>Read Chapter 1 Now</span>
+              <span>&rarr;</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Launch bonus bundle -->
+    <section id="bonuses" class="py-20 sm:py-24 bg-gradient-to-b from-indigo-950 to-dark-950 border-y border-indigo-800/60">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <span class="inline-block rounded-full bg-indigo-500/20 border border-indigo-400/30 px-4 py-2 text-indigo-300 text-xs font-bold tracking-widest uppercase">Launch Bonus Bundle</span>
+          <h2 class="mt-5 text-3xl sm:text-4xl md:text-5xl font-black font-heading text-white">More Than The Software.<br><span class="text-gradient-emerald">Everything To Get Moving.</span></h2>
+          <p class="mt-5 text-slate-300 text-base sm:text-lg">Five practical guides to help you plan your publishing journey, prepare your listing and get ready to upload.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <article class="glass-card rounded-2xl p-6 border-t-4 border-t-indigo-500"><p class="text-indigo-300 text-xs font-bold tracking-widest uppercase mb-3">Bonus 01 &bull; Start Here</p><h3 class="text-xl font-bold text-white mb-3">First Book Quickstart Playbook</h3><p class="text-slate-300 text-sm leading-relaxed">A practical roadmap for choosing your book idea, creating your files and preparing your first KDP upload.</p></article>
+          <article class="glass-card rounded-2xl p-6 border-t-4 border-t-emerald-500"><p class="text-emerald-300 text-xs font-bold tracking-widest uppercase mb-3">Bonus 02 &bull; Find An Angle</p><h3 class="text-xl font-bold text-white mb-3">50 Evergreen Niches Cheat-Sheet</h3><p class="text-slate-300 text-sm leading-relaxed">Explore niche ideas to help decide what to create next.</p></article>
+          <article class="glass-card rounded-2xl p-6 border-t-4 border-t-amber-500"><p class="text-amber-300 text-xs font-bold tracking-widest uppercase mb-3">Bonus 03 &bull; Plan Ahead</p><h3 class="text-xl font-bold text-white mb-3">12-Month Publishing Calendar</h3><p class="text-slate-300 text-sm leading-relaxed">Map seasonal themes, holidays and release windows across the year.</p></article>
+          <article class="glass-card rounded-2xl p-6 border-t-4 border-t-indigo-500"><p class="text-indigo-300 text-xs font-bold tracking-widest uppercase mb-3">Bonus 04 &bull; Position It</p><h3 class="text-xl font-bold text-white mb-3">KDP Keyword + Category Swipe File</h3><p class="text-slate-300 text-sm leading-relaxed">Use keyword and category examples as a starting point for your book listing.</p></article>
+          <article class="glass-card rounded-2xl p-6 border-t-4 border-t-emerald-500"><p class="text-emerald-300 text-xs font-bold tracking-widest uppercase mb-3">Bonus 05 &bull; Upload With Care</p><h3 class="text-xl font-bold text-white mb-3">KDP Upload Checklist + Rejection Fix Guide</h3><p class="text-slate-300 text-sm leading-relaxed">Review common print-file issues and what to check if KDP flags an upload.</p></article>
+          <div class="rounded-2xl p-6 bg-gradient-to-br from-indigo-700 to-emerald-600 flex flex-col justify-center text-center"><p class="text-white font-heading text-2xl font-black mb-4">Your Publishing Toolkit</p><a href="#payment-section" class="cta-btn-shimmer rounded-xl py-3 px-5 text-dark-950 font-black">Get BookSaga &rarr;</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 38, 39: VALUE STACK & PRICING -->
+    <section id="pricing" class="py-24 bg-dark-950 relative overflow-hidden">
+      <!-- Glow effect -->
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-gradient-to-r from-amber-500/15 via-indigo-600/20 to-amber-500/15 blur-[150px] -z-10 rounded-full pointer-events-none"></div>
+
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section 38: Value Stack -->
+        <div class="text-center mb-12">
+          <span class="text-amber-400 font-bold text-xs uppercase tracking-widest bg-amber-950/60 border border-amber-800/60 px-3.5 py-1 rounded-full">
+            THE COMPLETE BUNDLE
+          </span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mt-4 mb-3">
+            Here's Everything You Get Today With BookSaga Basic
+          </h2>
+          <p class="text-slate-400 text-sm sm:text-base">One single payment &bull; Lifetime access &bull; Zero monthly fees</p>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-700/80 shadow-2xl mb-12 text-left">
+          <div class="divide-y divide-slate-800 text-sm sm:text-base">
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>BookSaga Series Engine</strong> &mdash; 5 connected books from 1 idea</span><span class="font-mono text-slate-400">$1,997</span></div>
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>Series Bible Generator</strong> &mdash; characters, places, timeline &amp; threads</span><span class="font-mono text-slate-400">$997</span></div>
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>Continuity Check &amp; Report</strong> &mdash; automated error resolver</span><span class="font-mono text-slate-400">$997</span></div>
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>Cliffhanger &amp; "Read Next" Engine</strong> &mdash; every book sells the next</span><span class="font-mono text-slate-400">$697</span></div>
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>Matching Series Cover Studio</strong> &mdash; AI art + locked series branding</span><span class="font-mono text-slate-400">$997</span></div>
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>Image &amp; Layer Editor</strong> &mdash; 30 curated fonts &amp; layout controls</span><span class="font-mono text-slate-400">$297</span></div>
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>Titles, Blurbs, 7 Keywords &amp; 3 Categories</strong> per book</span><span class="font-mono text-slate-400">$697</span></div>
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>KDP Export Pack</strong> &mdash; EPUB3, print PDF, DOCX, metadata sheet</span><span class="font-mono text-slate-400">$997</span></div>
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>KDP Preview &amp; Pre-Flight Checker</strong> &mdash; pre-upload validation</span><span class="font-mono text-slate-400">$497</span></div>
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>AI Chapter Editor</strong> &mdash; rewrite, expand, shorten &amp; regenerate</span><span class="font-mono text-slate-400">$497</span></div>
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>Fiction &amp; Non-Fiction Modes</strong> &mdash; 15+ proven genres</span><span class="font-mono text-slate-400">$497</span></div>
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>Pen Name Manager</strong> &mdash; 100% private faceless operations</span><span class="font-mono text-slate-400">$297</span></div>
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>KDP Step-by-Step Upload Training</strong> &mdash; series linking &amp; KU guide</span><span class="font-mono text-slate-400">$497</span></div>
+            <div class="py-3 flex justify-between items-center"><span class="text-slate-200"><strong class="text-emerald-400 mr-2">&check;</strong> <strong>Full Commercial Rights</strong> &mdash; keep 100% of your royalties</span><span class="font-mono text-slate-400">$997</span></div>
+            <div class="pt-4 flex justify-between items-center text-lg sm:text-xl font-black text-white font-heading">
+              <span>Total Real-World Value:</span>
+              <span class="text-gradient-gold text-2xl font-mono">$10,958</span>
+            </div>
+          </div>
+        </div>
+
+                <!-- Section 39 & 40: DEDICATED OFFICIAL PAYMENT & CHECKOUT SECTION -->
+        <div id="payment-section" class="scroll-mt-28 bg-gradient-to-b from-dark-900 via-dark-950 to-dark-900 border-2 border-amber-500 rounded-3xl p-6 sm:p-10 md:p-12 text-center shadow-glow-amber relative transition-all duration-300">
+          
+          <!-- Top Launch Badge -->
+          <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-amber-600 text-dark-950 font-black text-xs sm:text-sm uppercase tracking-widest px-6 py-1.5 rounded-full shadow-lg flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-dark-950 animate-ping"></span>
+            <span>SECURE CHECKOUT &bull; 85% LAUNCH DISCOUNT</span>
+          </div>
+
+          <div class="mt-4 mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Step 3 of 3: Instant Activation</span>
+            <h3 class="text-2xl sm:text-3xl md:text-4xl font-black text-white font-heading mt-1">
+              Select Your Payment Option &amp; Start Tonight
+            </h3>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">
+              Other AI tools charge <span class="text-red-400 font-bold">$50 &ndash; $135 EVERY MONTH</span>. BookSaga is one single payment.
+            </p>
+          </div>
+
+          <!-- Price Display -->
+          <div class="my-6 p-4 rounded-2xl bg-dark-950/80 border border-slate-800">
+            <span class="text-slate-500 text-lg sm:text-xl line-through font-bold block">Regular Price: $67/Month</span>
+            <div class="text-5xl sm:text-6xl md:text-7xl font-black text-white font-heading tracking-tight mt-1">
+              Today Just <span class="text-gradient-gold">$17</span>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-2 mt-3 text-xs sm:text-sm font-semibold text-emerald-400">
+              <span class="bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-500/40">&check; One-Time Payment</span>
+              <span class="bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-500/40">&check; Lifetime Access</span>
+              <span class="bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-500/40">&check; Zero Monthly Fees</span>
+            </div>
+          </div>
+
+          <!-- Live Order Summary Box -->
+          <div class="max-w-xl mx-auto my-6 bg-dark-950/90 border border-slate-800 rounded-2xl p-4 text-left text-xs sm:text-sm">
+            <div class="font-bold text-slate-300 uppercase tracking-wider text-xs border-b border-slate-800 pb-2 mb-2 flex justify-between">
+              <span>Order Summary</span>
+              <span>Amount</span>
+            </div>
+            <div class="flex justify-between py-1 text-slate-300">
+              <span>BookSaga Basic (Lifetime Access)</span>
+              <span class="font-mono text-white font-bold">$17.00</span>
+            </div>
+            <div class="flex justify-between items-center pt-3 border-t border-slate-800 font-bold text-white text-base">
+              <span>Total Payable Right Now:</span>
+              <span id="checkout-total-price" class="text-2xl font-black text-emerald-400 font-heading">$17.00</span>
+            </div>
+          </div>
+
+          <!-- Primary Checkout Buy Button -->
+          <div class="max-w-xl mx-auto my-6">
+            <a id="main-checkout-btn" 
+               href="https://warriorplus.com/buy/booksaga" 
+               target="_blank" 
+               class="cta-btn-shimmer block w-full py-5 px-8 rounded-2xl text-dark-950 font-black text-xl sm:text-2xl font-heading shadow-glow-amber hover:scale-105 active:scale-95 transition-all">
+              <span id="checkout-btn-text">YES! Start My First Saga For $17 &rarr;</span>
+            </a>
+            <p class="text-[11px] text-slate-400 mt-2">
+              Instant Account Access &bull; 100% Secure Checkout via WarriorPlus &bull; No Hidden Re-bills
+            </p>
+          </div>
+
+          <!-- Payment Processor Logos -->
+          <div class="max-w-md mx-auto my-6 pt-4 border-t border-slate-800/80">
+            <p class="text-[11px] text-slate-400 uppercase tracking-wider font-bold mb-3">Accepted Payment Gateways:</p>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+              <!-- Visa -->
+              <div class="h-8 px-3 rounded-lg bg-white/10 border border-slate-700 flex items-center justify-center font-black text-white text-xs tracking-wider">
+                VISA
+              </div>
+              <!-- MasterCard -->
+              <div class="h-8 px-3 rounded-lg bg-white/10 border border-slate-700 flex items-center justify-center font-bold text-white text-xs">
+                MasterCard
+              </div>
+              <!-- AMEX -->
+              <div class="h-8 px-3 rounded-lg bg-white/10 border border-slate-700 flex items-center justify-center font-bold text-cyan-300 text-xs">
+                AMEX
+              </div>
+              <!-- Discover -->
+              <div class="h-8 px-3 rounded-lg bg-white/10 border border-slate-700 flex items-center justify-center font-bold text-orange-400 text-xs">
+                DISCOVER
+              </div>
+              <!-- PayPal -->
+              <div class="h-8 px-3 rounded-lg bg-white/10 border border-slate-700 flex items-center justify-center font-black text-blue-400 text-xs">
+                PayPal
+              </div>
+            </div>
+          </div>
+
+          <!-- Trust & Security Badges -->
+          <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400 pt-2">
+            <span class="flex items-center text-emerald-400 font-semibold">
+              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+              256-Bit SSL Encryption
+            </span>
+            <span>&bull;</span>
+            <span class="flex items-center text-amber-400 font-bold">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              30-Day Money-Back Guarantee
+            </span>
+            <span>&bull;</span>
+            <span class="flex items-center text-slate-300">
+              <svg class="w-4 h-4 mr-1 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Instant Digital Delivery
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 41: 30-DAY MONEY-BACK GUARANTEE -->
+    <section class="py-20 bg-dark-900 border-t border-slate-800">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass-card p-8 sm:p-12 rounded-3xl border-2 border-emerald-500/50 shadow-glow-emerald flex flex-col md:flex-row items-center gap-8">
+          <!-- Guarantee Badge SVG -->
+          <div class="w-32 h-32 shrink-0 rounded-full bg-gradient-to-tr from-amber-600 via-amber-400 to-amber-600 p-1 flex items-center justify-center shadow-glow-amber">
+            <div class="w-full h-full bg-dark-950 rounded-full border-2 border-amber-300 flex flex-col items-center justify-center text-center p-2">
+              <span class="text-xs font-black uppercase text-amber-300 tracking-wider">100% RISK-FREE</span>
+              <span class="text-3xl font-black text-white font-heading leading-tight">30</span>
+              <span class="text-[10px] font-bold text-slate-300 uppercase">Day Guarantee</span>
+            </div>
+          </div>
+
+          <div class="text-left">
+            <span class="text-emerald-400 font-bold text-xs uppercase tracking-widest bg-emerald-950/60 border border-emerald-800/60 px-3 py-1 rounded-full">
+              YOUR INVESTMENT IS 100% PROTECTED
+            </span>
+            <h3 class="text-2xl sm:text-3xl font-black text-white font-heading mt-3 mb-2">
+              Try BookSaga For 30 Full Days. Risk-Free.
+            </h3>
+            <p class="text-sm text-slate-300 leading-relaxed mb-4">
+              Build a series. Read it. Check the continuity. Look at the covers. Upload Book One and watch it go live on Amazon.
+            </p>
+            <p class="text-sm text-slate-300 leading-relaxed mb-4">
+              If BookSaga doesn't do everything this page describes, simply email <strong class="text-amber-400 underline">softwarevh@gmail.com</strong> and get every cent back immediately. No hoops. No questions asked.
+            </p>
+            <p class="text-white font-bold text-sm">
+              You either love what it builds for you, or you pay nothing.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 42, 43, 44: WHAT HAPPENS IF YOU WALK AWAY, WARNING & TWO OPTIONS -->
+    <section class="py-24 bg-dark-950">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        
+        <!-- Section 42 -->
+        <div class="mb-16">
+          <h2 class="text-3xl sm:text-4xl font-black text-white font-heading mb-4">
+            What Happens If You Walk Away Today?
+          </h2>
+          <p class="text-slate-400 text-base mb-8">Nothing changes. And that's the real problem.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left text-xs sm:text-sm text-slate-300">
+            <div class="p-4 bg-dark-900 rounded-xl border border-red-950 flex items-start"><span class="text-red-400 mr-2 font-bold">&#10005;</span> You keep publishing single books that sell once and go silent.</div>
+            <div class="p-4 bg-dark-900 rounded-xl border border-red-950 flex items-start"><span class="text-red-400 mr-2 font-bold">&#10005;</span> Every reader you work hard to find buys one title and leaves forever.</div>
+            <div class="p-4 bg-dark-900 rounded-xl border border-red-950 flex items-start"><span class="text-red-400 mr-2 font-bold">&#10005;</span> The series you keep meaning to write stays locked inside your head.</div>
+            <div class="p-4 bg-dark-900 rounded-xl border border-red-950 flex items-start"><span class="text-red-400 mr-2 font-bold">&#10005;</span> Ghostwriter quotes keep arriving with five figures on them.</div>
+            <div class="p-4 bg-dark-900 rounded-xl border border-red-950 flex items-start"><span class="text-red-400 mr-2 font-bold">&#10005;</span> Other publishers fill your genre with series while you release standalones.</div>
+            <div class="p-4 bg-dark-900 rounded-xl border border-red-950 flex items-start"><span class="text-red-400 mr-2 font-bold">&#10005;</span> A year from now, your KDP dashboard looks exactly like it does today.</div>
+          </div>
+        </div>
+
+        <!-- Section 43: Warning -->
+        <div class="bg-red-950/40 border border-red-600/50 p-6 sm:p-8 rounded-3xl mb-16 text-center">
+          <span class="text-red-400 font-extrabold text-xs uppercase tracking-widest block mb-2">&#9888;&#65039; WARNING: THIS IS A ONE-TIME LAUNCH OFFER</span>
+          <h3 class="text-2xl sm:text-3xl font-black text-white font-heading mb-3">
+            The $17 Launch Pricing Won't Last
+          </h3>
+          <p class="text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
+            Writing complete series costs real money in AI processing. We can offer this introductory price now because we're launching and want early success stories publishing fast. When this window closes, BookSaga moves to its regular monthly recurring price.
+          </p>
+        </div>
+
+        <!-- Section 44: Two Options -->
+        <div class="mb-16">
+          <h2 class="text-3xl sm:text-4xl font-black text-white font-heading mb-8">
+            Right Now, You've Got Two Options:
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+            <div class="glass-card p-6 rounded-2xl border-t-4 border-t-slate-600">
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Option One</span>
+              <h4 class="text-lg font-bold text-white mb-2 font-heading">Close This Page</h4>
+              <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                Nothing bad happens. You keep publishing the way you always have: one book at a time, each starting from zero, each reader worth a single purchase. Six months from now, nothing has changed.
+              </p>
+            </div>
+
+            <div class="glass-card p-6 rounded-2xl border-t-4 border-t-amber-500 shadow-glow-amber">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block mb-1">Option Two (Smart Move)</span>
+              <h4 class="text-lg font-bold text-white mb-2 font-heading">Build Your First Series Tonight</h4>
+              <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                For just $17, you type one idea and get a complete 5-book series with matching covers and KDP-ready files. Book One goes up to Amazon tonight, and every reader who finds you has a whole shelf to buy!
+              </p>
+              <a href="#payment-section" class="cta-btn-shimmer block text-center py-2.5 px-4 rounded-xl text-dark-950 font-bold text-xs uppercase tracking-wider">
+                I Choose Option Two &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 45 & 46: WHY WE BUILT BOOKSAGA & WELCOME TO THE FAMILY -->
+    <section class="py-20 bg-dark-900 border-t border-slate-800">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section 45 -->
+        <div class="text-center mb-16">
+          <h2 class="text-3xl sm:text-4xl font-black text-white font-heading mb-4">
+            Why We Built BookSaga
+          </h2>
+          <div class="prose prose-invert max-w-none text-left text-sm sm:text-base text-slate-300 space-y-4 leading-relaxed bg-dark-950 p-6 sm:p-8 rounded-2xl border border-slate-800">
+            <p>We've watched the same heartbreaking story repeat on KDP for years.</p>
+            <p>Someone publishes their first book. It takes months. It sells a handful of copies. The reviews trickle in, sales flatten, and they quietly give up.</p>
+            <p>Meanwhile, the authors making real money were doing something structurally different. They weren't better writers. They simply gave readers somewhere to go next.</p>
+            <p>Every tool out there was built to make one book faster. Nobody built one around what actually pays: <strong class="text-white">a connected series with consistent characters that keeps a reader buying.</strong></p>
+            <p class="text-amber-400 font-bold">So we built it.</p>
+          </div>
+        </div>
+
+        <!-- Meet the team -->
+        <div class="text-center">
+          <div class="team-heading">
+            <span class="team-kicker">Meet the team</span>
+            <h3 class="text-3xl sm:text-4xl font-black text-white font-heading mt-3">The People Behind BookSaga</h3>
+            <p class="team-subtitle">Bringing product strategy and AI development together to help you build your next book series.</p>
+          </div>
+          <div class="team-grid">
+            <article class="team-card">
+              <img src="assets/images/pradip.webp" alt="Pradip" class="team-photo" loading="lazy">
+              <div class="team-details">
+                <p class="team-role">Product Planning &bull; Marketing Strategy</p>
+                <h4 class="team-name font-heading">Pradip</h4>
+                <p class="team-description">Product vision, funnel optimization and customer-focused innovation.</p>
+                <a class="team-link" href="https://www.facebook.com/pradippanditpk/" target="_blank" rel="noopener noreferrer">View Facebook profile <span aria-hidden="true">&rarr;</span></a>
+              </div>
+            </article>
+            <article class="team-card">
+              <img src="assets/images/prem.webp" alt="Prem" class="team-photo" loading="lazy">
+              <div class="team-details">
+                <p class="team-role">AI Development &bull; Software Architecture</p>
+                <h4 class="team-name font-heading">Prem</h4>
+                <p class="team-description">AI tools, machine learning and intelligent automation.</p>
+                <a class="team-link" href="https://www.facebook.com/Prempandit" target="_blank" rel="noopener noreferrer">View Facebook profile <span aria-hidden="true">&rarr;</span></a>
+              </div>
+            </article>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 47: FAQ (20 ACCORDION ITEMS) -->
+    <section id="faq" class="py-24 bg-dark-950">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <span class="text-indigo-400 font-bold text-xs uppercase tracking-widest bg-indigo-950/60 border border-indigo-800/60 px-3.5 py-1 rounded-full">
+            GOT QUESTIONS? WE'VE GOT ANSWERS
+          </span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white font-heading mt-4">
+            Frequently Asked Questions
+          </h2>
+        </div>
+
+        <div class="space-y-3" id="faq-accordion">
+          
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Do I need any writing or publishing experience?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              None. You type one idea, pick a genre and how many books you want. BookSaga handles the planning, writing, continuity, covers and file formatting.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>How long are the books?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              On Basic you choose per book: Short (~12,000 words, 8–10 chapters) or Standard (~30,000 words, 15–20 chapters). Full-length (~55,000 words, 25–30 chapters) unlocks with BookSaga Unlimited.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>How many books can I put in one series?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              Up to 5 books per series and 3 active series at a time on Basic. Unlimited raises this to 30 books per series.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Will the characters and plot really stay consistent?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              Yes. The whole arc is mapped first. The Series Bible records every name, place, date and backstory as chapters are written, and each finished book gets a continuity check against it.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Does it work for non-fiction?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              Yes. Self-help, business, health, devotional, how-to and more, planned as connected volumes rather than unrelated titles.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Are the covers included?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              Yes. Book 1 sets the series style and every later cover follows it, so the set matches. You can edit every text layer in Cover Studio or upload your own art.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Does Amazon allow AI-generated books?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              Yes. KDP allows AI-generated content and asks you to disclose it when you publish, which takes one click in the KDP form. Our upload guide shows you exactly where. Amazon enforces quality and originality, which is why BookSaga focuses on chaptered, connected, consistent books.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Can I use a pen name?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              Yes, as many as you like. Nobody has to know it's you.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Do I own the books?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              Completely. Full commercial rights are included and you keep 100% of every royalty Amazon pays you.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Are there any monthly fees?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              Not with the launch offer. One payment gives you lifetime access to BookSaga Basic.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>How fast can I publish?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              Most users have Book One ready the same day they log in. How quickly the rest goes live depends on you and Amazon's review times.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Can I edit the books before publishing?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              Yes. Everything is editable: rename characters, rewrite scenes, adjust endings, or use the AI editor to rewrite, expand or shorten any section.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Does BookSaga upload to Amazon for me?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              No. Amazon has no public publishing API, so you download your files and upload them to KDP yourself. Our step-by-step guide covers ebooks, paperbacks, series linking and KDP Select.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Can I make box sets?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              Yes, with BookSaga Unlimited. The Box Set Builder bundles 2+ books with a combined TOC, divider pages, a box set cover and description.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Do I need an audience or social media?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              No. Amazon brings the readers. Many publishers run a fully faceless business with just a pen name and a shelf of books.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Should I enrol in Kindle Unlimited?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              Most series publishers do, because KU pays per page read and series readers binge. It's your choice when you publish, and you can change it later.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>Is there a limit on how much I can generate per day?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              BookSaga allows up to 10 books per day per account. Amazon also limits how many new titles one account can publish daily, so a big series usually goes live over a few days.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>What about returns?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              Amazon allows ebook returns, as it always has. The way to keep returns low is the same as ever: proper-length books, consistent characters and satisfying endings. That's what BookSaga is built to produce, and everything is editable before you publish.
+            </div>
+          </div>
+
+          <div class="faq-item glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button class="w-full p-5 text-left font-bold text-white flex justify-between items-center text-sm sm:text-base" onclick="toggleFaq(this)">
+              <span>What if it's not for me?</span>
+              <span class="faq-icon text-amber-400 text-xl font-mono">+</span>
+            </button>
+            <div class="faq-content hidden p-5 pt-0 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60">
+              You're covered by our 30-day money-back guarantee. One email to softwarevh@gmail.com and you get every cent back.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 48: FINAL WORD + P.S. + P.P.S. -->
+    <section class="py-20 bg-dark-900 border-t border-slate-800 text-center">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl sm:text-4xl font-black text-white font-heading mb-6">
+          Final Word
+        </h2>
+        <p class="text-slate-300 text-base leading-relaxed mb-4">
+          On Amazon, the hard part isn't writing a book. It's finding a reader.
+        </p>
+        <p class="text-white text-lg font-bold mb-4">
+          Once you've found one, everything comes down to one question: <span class="text-amber-400">do you have anything else for them to buy?</span>
+        </p>
+        <p class="text-slate-300 text-base leading-relaxed mb-8">
+          For most publishers the answer is no, and that's why their royalties stay tiny no matter how hard they work. BookSaga changes that answer. One idea becomes a whole shelf, connected and consistent, with every book pulling the reader into the next.
+        </p>
+        <p class="text-xl font-black text-emerald-400 mb-8 font-heading">
+          $17, once. Your first series can be written tonight and live on Amazon this week.
+        </p>
+
+        <a href="#payment-section" class="cta-btn-shimmer inline-block py-4 px-10 rounded-2xl text-dark-950 font-black text-xl font-heading shadow-glow-amber hover:scale-105 active:scale-95 transition-all mb-8">
+          YES! Start My First Saga Now &rarr;
+        </a>
+
+        <div class="text-left text-xs sm:text-sm text-slate-400 space-y-4 pt-6 border-t border-slate-800">
+          <p>
+            <strong class="text-white">P.S.</strong> A standalone book earns once per reader. A series earns again and again from that same reader, for as long as it's on Amazon. Finding the reader takes the same effort either way. Only what's waiting for them is different.
+          </p>
+          <p>
+            <strong class="text-white">P.P.S.</strong> You're covered by our 30-day money-back guarantee. Build a series, read it, check the continuity, publish Book One. If it isn't everything this page describes, one email gets you every cent back.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- SECTION 49: FOOTER + DISCLAIMERS -->
+  <footer class="bg-dark-900 border-t border-slate-800 pt-16 pb-28 text-center">
+    <div class="max-w-4xl mx-auto px-5 sm:px-8">
+      <a href="#hero" class="inline-block rounded-xl bg-white p-2 mb-9" aria-label="BookSaga home">
+        <img src="assets/images/booksaga-monogram.png" alt="BookSaga" class="w-40 sm:w-48 h-auto object-contain">
+      </a>
+      <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+        <strong class="text-white">Please Note:</strong> All royalty figures and examples on this page are illustrations, not promises. Results vary with your niche, effort, quality control, pricing, competition and factors outside our control. Nothing here guarantees income, KDP approval, rankings or sales. You are responsible for reviewing all generated content before publishing, for the rights to any material you upload, and for following Amazon's content and AI-disclosure policies.
+      </p>
+      <p class="mt-7 text-xs sm:text-sm text-slate-400 italic leading-relaxed max-w-3xl mx-auto">
+        This website is not affiliated with, endorsed by or sponsored by Amazon, Google, YouTube or Facebook. Amazon, Kindle, Kindle Unlimited and KDP are trademarks of Amazon.com, Inc. or its affiliates.
+      </p>
+      <nav aria-label="Footer links" class="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm sm:text-base font-bold text-white">
+        <a href="#hero" class="underline hover:text-amber-400">Privacy Policy</a>
+        <a href="#hero" class="underline hover:text-amber-400">Terms &amp; Conditions</a>
+        <a href="#hero" class="underline hover:text-amber-400">Earnings Disclaimer</a>
+        <a href="mailto:softwarevh@gmail.com" class="underline hover:text-amber-400">Support</a>
+        <a href="#hero" class="underline hover:text-amber-400">Refund Policy</a>
+        <a href="#hero" class="underline hover:text-amber-400">AI Content Disclosure</a>
+        <a href="#hero" class="underline hover:text-amber-400">Affiliate Disclosure</a>
+        <a href="#hero" class="underline hover:text-amber-400">Member Login</a>
+      </nav>
+      <p class="mt-8 text-sm text-slate-400 font-semibold">&copy; <span id="current-year">2026</span> BookSaga &bull; All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <!-- SECTION 50: LIGHTBOX MODALS & VIDEO MODAL -->
+
+  <!-- 1. Video Modal -->
+  <div id="video-modal" class="fixed inset-0 z-50 bg-dark-950/90 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="relative max-w-4xl w-full bg-dark-900 border border-slate-700 rounded-3xl overflow-hidden shadow-2xl">
+      <div class="p-4 border-b border-slate-800 flex justify-between items-center">
+        <span class="text-sm font-bold text-white flex items-center">
+          <span class="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse"></span>
+          BookSaga Full Series Walkthrough Demo
+        </span>
+        <button onclick="closeVideoModal()" class="text-slate-400 hover:text-white text-xl font-bold p-1">&times;</button>
+      </div>
+      <div class="p-4">
+        <img src="assets/images/booksaga-dashboard.jpg" alt="Video Player Preview" class="w-full h-auto rounded-xl">
+        <div class="mt-4 p-4 bg-dark-950 rounded-xl border border-slate-800 text-xs text-slate-300 flex justify-between items-center">
+          <span>Demonstrating: Prompting &rarr; Arc Mapping &rarr; Bible Build &rarr; Multi-Book Generation &rarr; KDP Export</span>
+          <a href="#payment-section" onclick="closeVideoModal()" class="px-4 py-2 bg-amber-500 text-dark-950 font-bold rounded-lg text-xs">Get BookSaga For $17 &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Sample Covers Lightbox Modal -->
+  <div id="lightbox-modal" class="fixed inset-0 z-50 bg-dark-950/90 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="relative max-w-5xl w-full bg-dark-900 border border-slate-700 rounded-3xl overflow-hidden shadow-2xl">
+      <div class="p-4 border-b border-slate-800 flex justify-between items-center">
+        <span id="lightbox-title" class="text-sm font-bold text-white font-heading">Sample Inspection</span>
+        <button onclick="closeLightbox()" class="text-slate-400 hover:text-white text-2xl font-bold p-1 leading-none">&times;</button>
+      </div>
+      <div class="p-6 max-h-[80vh] overflow-y-auto text-center" id="lightbox-body">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Sample Chapter Modal -->
+  <div id="chapter-modal" class="fixed inset-0 z-50 bg-dark-950/90 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="relative max-w-3xl w-full bg-dark-900 border border-slate-700 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+      <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-dark-950">
+        <div>
+          <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block">Raw AI Manuscript Output</span>
+          <h3 class="text-base font-bold text-white font-heading">Murder Between The Pages &mdash; Chapter 1</h3>
+        </div>
+        <button onclick="closeChapterModal()" class="text-slate-400 hover:text-white text-2xl font-bold p-1 leading-none">&times;</button>
+      </div>
+      <div class="p-6 sm:p-8 overflow-y-auto prose prose-invert max-w-none text-slate-300 text-sm sm:text-base leading-relaxed font-serif bg-[#0c101d]">
+        <p class="text-center italic text-xs text-slate-400 mb-6 font-sans">
+          (Unedited Chapter 1 generated by BookSaga for "The Lakeview Murders" series)
+        </p>
+
+        <h4 class="text-center font-heading text-xl text-white mb-6 font-bold">CHAPTER 1: THE NOTE IN THE VERSE</h4>
+
+        <p><span class="float-left text-5xl leading-none font-bold text-amber-400 mr-3 mt-1 font-heading">T</span>he lakeside bell chimed twice when Margaret Finch unlocked the worn pine door of Lakeside Books. It was seven in the morning, and the autumn mist still clung to Lake Willow like a shroud of damp gauze. She had run this quiet shop for twenty-two years, ever since Arthur had passed, but this morning felt distinctively, dangerously unsettled.</p>
+
+        <p>A fresh crate of donated estate books had been left on the porch overnight, sheltered beneath the green canvas awning. Margaret pulled on her canvas work apron, poured a mug of black coffee, and knelt beside the wooden box.</p>
+
+        <p>Near the middle of the stack lay a first edition of Victorian poetry, its leather spine cracked and dusty. As Margaret slid the volume free, a folded cream envelope slid out from between pages 140 and 141. No name. No postage stamp. Just four words penned in faded black fountain ink across the crease:</p>
+
+        <p class="italic text-center text-amber-300 font-bold my-4">"He didn't drown accidentally."</p>
+
+        <p>Margaret's breath caught in her throat. Her mug rattled against the oak counter as she set it down. Arthur's rowboat had been found overturned eleven years ago in the deepest trench of Lake Willow. The county coroner had ruled it an accidental drowning within forty-eight hours.</p>
+
+        <p>She brought the note closer to the morning window light. In the lower right corner was an embossed seal of the Willow Creek Municipal Archives &mdash; and beneath it, in shaky but unmistakable cursive, were her husband's exact initials: <em>A. F.</em></p>
+
+        <p class="border-t border-slate-800 pt-4 mt-6 text-xs text-slate-400 font-sans">
+          &rarr; BookSaga writes in natural, paced prose with sensory detail, character agency, and immediate cliffhangers that lead straight into the next chapter and volume.
+        </p>
+      </div>
+      <div class="p-4 bg-dark-950 border-t border-slate-800 flex justify-between items-center">
+        <span class="text-xs text-slate-400">Word Count: ~1,850 Words &bull; 100% Continuity Verified</span>
+        <a href="#payment-section" onclick="closeChapterModal()" class="cta-btn-shimmer px-5 py-2 rounded-xl text-dark-950 font-bold text-xs uppercase tracking-wider">
+          Get BookSaga &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT CONTROLLERS -->
+  <script>
+    // Smooth scroll and pulse highlight for all payment links
+    document.querySelectorAll('a[href="#payment-section"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const target = document.getElementById('payment-section');
+        if (target) {
+          target.classList.add('ring-4', 'ring-amber-400', 'ring-offset-4', 'ring-offset-dark-950');
+          setTimeout(() => {
+            target.classList.remove('ring-4', 'ring-amber-400', 'ring-offset-4', 'ring-offset-dark-950');
+          }, 1800);
+        }
+      });
+    });
+
+    // 4. FAQ Accordion Toggle
+    function toggleFaq(button) {
+      const content = button.nextElementSibling;
+      const icon = button.querySelector('.faq-icon');
+      const isOpen = !content.classList.contains('hidden');
+
+      // Close all others
+      document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
+      document.querySelectorAll('.faq-icon').forEach(i => i.textContent = '+');
+
+      if (!isOpen) {
+        content.classList.remove('hidden');
+        icon.textContent = '−';
+      }
+    }
+
+    // 5. Gallery Tab Filtering
+    function filterGallery(category) {
+      const buttons = document.querySelectorAll('.gallery-tab-btn');
+      buttons.forEach(b => {
+        b.classList.remove('bg-amber-500', 'text-dark-950', 'shadow-glow-amber');
+        b.classList.add('bg-dark-950', 'text-slate-300');
+      });
+      event.target.classList.remove('bg-dark-950', 'text-slate-300');
+      event.target.classList.add('bg-amber-500', 'text-dark-950', 'shadow-glow-amber');
+
+      const items = document.querySelectorAll('.gallery-item');
+      items.forEach(item => {
+        if (category === 'all' || item.classList.contains(category)) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    }
+
+    // 6. Lightbox Modal Controllers
+    const modalData = {
+      cozy: {
+        title: 'Cozy Mystery Series: The Lakeview Murders (Books 1 to 5)',
+        html: `
+          <div class="mb-4 text-slate-300 text-sm">Every book features locked typography, matching color palette, and author branding for M. C. Finch.</div>
+          <img src="assets/images/cozy-mystery-series.jpg" class="w-full h-auto rounded-xl shadow-2xl mb-4">
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <img src="assets/images/book1-murder.jpg" class="rounded-lg shadow">
+            <img src="assets/images/book2-overdue.jpg" class="rounded-lg shadow">
+            <img src="assets/images/book3-lies.jpg" class="rounded-lg shadow">
+            <img src="assets/images/book4-ledger.jpg" class="rounded-lg shadow">
+            <img src="assets/images/book5-footnote.jpg" class="rounded-lg shadow">
+          </div>
+        `
+      },
+      romance: {
+        title: 'Romance Series: Harbor Bay Trilogy (Books 1 to 3)',
+        html: `
+          <div class="mb-4 text-slate-300 text-sm">Harmonious coastal sunset palettes, elegant script titles, and matching author pen name layout.</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <img src="assets/images/romance-book1.jpg" class="rounded-xl shadow-2xl">
+            <img src="assets/images/romance-book2.jpg" class="rounded-xl shadow-2xl">
+            <img src="assets/images/romance-book3.jpg" class="rounded-xl shadow-2xl">
+          </div>
+        `
+      },
+      faith: {
+        title: 'Devotional Suite: Morning Grace (Volumes 1 to 3)',
+        html: `
+          <div class="mb-4 text-slate-300 text-sm">Gold foil botanical borders, seasonal daily devotionals designed to sell as complete quarterly box sets.</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <img src="assets/images/faith-book1.jpg" class="rounded-xl shadow-2xl">
+            <img src="assets/images/faith-book2.jpg" class="rounded-xl shadow-2xl">
+            <img src="assets/images/faith-book3.jpg" class="rounded-xl shadow-2xl">
+          </div>
+        `
+      },
+      interior: {
+        title: 'Interior Book Formatting: Chapter Drop Cap & "Read Next" Page',
+        html: `
+          <div class="mb-4 text-slate-300 text-sm">Exported ready for Amazon KDP print paperback and Kindle EPUB3 with back-matter links.</div>
+          <img src="assets/images/interior-spread.jpg" class="w-full h-auto rounded-xl shadow-2xl">
+        `
+      },
+      amazon: {
+        title: 'Live Amazon KDP Series Page Mockup',
+        html: `
+          <div class="mb-4 text-slate-300 text-sm">Dedicated Amazon Series page with the 1-Click "Buy all 5 with 1-Click for $17.45" golden button.</div>
+          <img src="assets/images/amazon-series-preview.jpg" class="w-full h-auto rounded-xl shadow-2xl">
+        `
+      }
+    };
+
+    function openLightbox(key) {
+      const modal = document.getElementById('lightbox-modal');
+      const title = document.getElementById('lightbox-title');
+      const body = document.getElementById('lightbox-body');
+      if (modalData[key]) {
+        title.textContent = modalData[key].title;
+        body.innerHTML = modalData[key].html;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('lightbox-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function openVideoModal() {
+      const modal = document.getElementById('video-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeVideoModal() {
+      const modal = document.getElementById('video-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function openChapterModal() {
+      const modal = document.getElementById('chapter-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeChapterModal() {
+      const modal = document.getElementById('chapter-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // Close modals on Escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLightbox();
+        closeVideoModal();
+        closeChapterModal();
+      }
+    });
+  </script>
+</body>
+</html>

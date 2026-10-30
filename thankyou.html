@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Thank You for Your Purchase | BookSaga</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #090d1a; color: #f8f8ff; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    .brand { display: flex; justify-content: center; align-items: center; background: #fff; padding: 12px 20px; }
+    .brand img { width: 104px; height: auto; display: block; }
+    main { max-width: 880px; margin: auto; padding: 48px 20px 70px; text-align: center; }
+    .badge { display: inline-block; padding: 10px 18px; border: 1px solid #8839bd; border-radius: 999px; color: #edb0ff; background: #29123f; font-size: .75rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+    h1,h2,h3 { font-family: 'Outfit', system-ui, sans-serif; }
+    h1 { font-size: clamp(2.3rem, 6vw, 4rem); line-height: 1.08; letter-spacing: -.035em; margin: 28px 0 20px; }
+    h1 span { display: block; color: #ff8d49; }
+    .intro { max-width: 640px; margin: auto; color: #b3bfd0; font-size: 1.08rem; line-height: 1.7; }
+    .access { margin: 42px auto 0; padding: clamp(24px, 5vw, 45px); background: #151c31; border: 1px solid #a83cdb; border-radius: 24px; box-shadow: 0 18px 60px #0004; }
+    .label { color: #ff9a52; font-size: .8rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+    h2 { margin: 14px 0; font-size: clamp(1.6rem, 3.5vw, 2.2rem); }
+    .access p { color: #c0cad8; line-height: 1.7; }
+    .button { display: block; max-width: 480px; margin: 24px auto 0; padding: 18px 22px; border-radius: 14px; background: linear-gradient(110deg,#9231df,#e83e9b 55%,#ff812f); color: white; text-decoration: none; font-weight: 900; font-size: 1.05rem; transition: transform .2s; }
+    .button:hover { transform: translateY(-2px); } .button:focus-visible, a:focus-visible { outline: 3px solid #ffb96f; outline-offset: 4px; }
+    .steps { margin: 32px auto 0; text-align: left; padding: 26px; border-radius: 18px; background: #11182b; border: 1px solid #303851; }
+    .steps h3 { margin: 0 0 18px; font-size: 1.3rem; }
+    .steps ol { padding-left: 22px; margin: 0; color: #c7d1df; line-height: 1.75; }
+    .steps li + li { margin-top: 9px; } .steps a, .support a { color: #e0a6ff; overflow-wrap: anywhere; }
+    .support { margin: 28px auto 0; color: #aebbd0; line-height: 1.6; font-size: .94rem; }
+    footer { border-top: 1px solid #26304a; color: #93a3ba; text-align: center; font-size: .8rem; line-height: 1.6; padding: 30px 20px 40px; }
+    footer p { max-width: 730px; margin: 0 auto 12px; }
+    @media (prefers-reduced-motion: reduce) { .button { transition: none; } }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="brand"><a href="index.html" aria-label="BookSaga home"><img src="assets/images/booksaga-monogram.png" alt="BookSaga"></a></header>
+  <main>
+    <span class="badge">&#10024; Welcome to BookSaga</span>
+    <h1>Thank You For Your Purchase! <span>Your Next Chapter Starts Here.</span></h1>
+    <p class="intro">Welcome to BookSaga! Use the button below to visit your account and start creating your book series.</p>
+    <section class="access" aria-labelledby="access-title">
+      <span class="label">Your BookSaga Access</span>
+      <h2 id="access-title">Ready To Get Started?</h2>
+      <p>View your login details and support information to get started.</p>
+      <a class="button" href="support.html">ACCESS YOUR BOOKSAGA ACCOUNT &rarr;</a>
+    </section>
+    <section class="steps" aria-labelledby="steps-title">
+      <h3 id="steps-title">Next Steps To Get Started</h3>
+      <ol>
+        <li>Click the <strong>Access Your BookSaga Account</strong> button above.</li>
+        <li>Use the login details on the support page to sign in.</li>
+        <li>Enter your idea and start building your first series.</li>
+      </ol>
+    </section>
+    <p class="support">Need your login details or help accessing your account? <a href="support.html">View login details and support</a>.</p>
+  </main>
+  <footer>
+    <p>Not affiliated with, endorsed by, or sponsored by Amazon.com, Inc. Amazon, Kindle and KDP are trademarks of Amazon.com, Inc. or its affiliates.</p>
+    <p>&copy; <span id="year">2026</span> BookSaga. All Rights Reserved.</p>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
